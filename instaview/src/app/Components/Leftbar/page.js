@@ -16,11 +16,13 @@ const Leftbar = () => {
 
   return (
     <aside className="w-56 h-screen fixed bg-white border-r border-gray-300 p-4 flex flex-col">
-      <h2 className="text-lg font-[Pacifico] italic mb-8">INSTAVIEW</h2>
+      <div className="flex justify-start items-center mb-8">
+        <label className="text-lg font-[Pacifico] italic">INSTAVIEW</label>
+      </div>
       <ul className="space-y-4">
         {menuItems.map((item, index) => (
           <li key={index}>
-            <button className="flex items-center w-full p-2 text-lg hover:bg-gray-200 rounded-md transition">
+            <button className="flex items-center w-full p-2 text-base hover:bg-gray-200 rounded-md transition">
               <span className="mr-3">{item.icon}</span>
               {item.label}
             </button>
