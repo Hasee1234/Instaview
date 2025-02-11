@@ -11,7 +11,7 @@ const Leftbar = () => {
     { icon: <Heart size={22} />, label: 'Notifications' },
     { icon: <PlusSquare size={22} />, label: 'Create' },
     { icon: <User size={22} />, label: 'Profile' },
-    { icon: <Menu size={22} />, label: 'More' },
+    
   ];
 
   return (
@@ -22,7 +22,7 @@ const Leftbar = () => {
       <ul className="space-y-4">
         {menuItems.map((item, index) => (
           <li key={index}>
-            <button className="flex items-center w-full p-2 text-base hover:bg-gray-200 rounded-md transition">
+            <button className="flex items-center w-full p-3 text-base hover:bg-gray-200 rounded-md transition">
               <span className="mr-3">{item.icon}</span>
               {item.label}
             </button>
