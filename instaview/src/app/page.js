@@ -1,29 +1,29 @@
 import React from 'react'
-import Leftbar from './Components/Leftbar/page'
-import StoryBar from './StoryBar/StoryBar'
+import Leftbar from './Components/Leftbar/Leftbar'
+import StoryBar from './Components/StoryBar/StoryBar'
 
 export default function Page() {
   return (
-    <div className="grid grid-cols-5 gap-1 h-screen">
+    <div className="grid grid-cols-[1fr_2.5fr_1.5fr] gap-1 h-screen">
       {/* Left Sidebar */}
-      <div className="p-4 text-center col-span-1">
+      <div className="p-4 text-center">
         <Leftbar />
       </div>
 
       {/* Middle Section (StoryBar + Feed) */}
-      <div className="col-span-3 flex flex-col">
+      <div className="flex flex-col">
         {/* Story Bar */}
         <div className="p-4 text-center">
           <StoryBar />
         </div>
         {/* Feed Section */}
         <div className="p-4 text-center flex-grow overflow-y-auto">
-          Feed
+          feed
         </div>
       </div>
 
-      {/* Right Sidebar */}
-      <div className="bg-gray-300 p-4 text-center col-span-1">
+      {/* Right Sidebar (Half of Center Section) */}
+      <div className="bg-300 p-4 text-center">
         3
       </div>
     </div>
