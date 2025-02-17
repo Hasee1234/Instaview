@@ -1,5 +1,6 @@
 
 "use client";
+import { createPost } from "@/app/Store/Slices/feedSlice";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 
@@ -18,26 +19,15 @@ console.log("caption",caption);
 console.log("location",location);
 console.log("imageURL",imageURL);
 
-useEffect(() => {
-  if(post){
-    setCaption(post.caption)
-    setLocation(post.location)
-  }else{
-    setCaption("")
-    setLocation("")
-    
-  }
-
-}, [post])
-
 
 let postData={
   caption,
   imageURL:"https://via.placeholder.com/150",
   location,
-  createAt:new Date(),
+  createAt:new Date().toISOString,
 }
 
+dispatch(createPost(postData))
 
 
 }
@@ -63,8 +53,18 @@ let postData={
         className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         placeholder="Write a caption..."
         value={caption}
-        
+        onChange={(e)=>setCaption(e.target.value)}
       ></textarea>
+
+
+      {/* Location Input */}
+      <input
+        type="text"
+        className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 mt-2"
+        placeholder="Enter location..."
+        value={location}
+        onChange={(e) => setLocation(e.target.value)}
+      />
 
       {/* Submit Button */}
       <button

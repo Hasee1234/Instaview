@@ -1,7 +1,7 @@
 import React from 'react'
 import Leftbar from './Components/Leftbar/Leftbar'
 import StoryBar from './Components/StoryBar/StoryBar'
-import Main from './Components/Feed/Feed'
+import FeedListing from './Components/FeedListing/FeedListing'
 
 export default function Page() {
   return (
@@ -19,7 +19,7 @@ export default function Page() {
         </div>
         {/* Feed Section */}
         <div className="p-4 text-center flex-grow overflow-y-auto">
-          <Main/>
+          <FeedListing/>
         </div>
       </div>
 

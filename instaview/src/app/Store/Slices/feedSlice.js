@@ -1,9 +1,38 @@
 import { db } from "@/app/Config/firebase";
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, getDocs } from "firebase/firestore";
 
 const { createSlice, createAsyncThunk } = require("@reduxjs/toolkit");
 
 
+//getpost
+
+export const getposts=createAsyncThunk(
+    "feed/getPost",
+    async()=>{
+        try{
+            const collectionRef=collection(db,"Posts")
+            const docs=await getDocs(collectionRef)
+            let data=[]
+            console.log("docs",docs);
+            docs.forEach((doc)=>{
+                console.log("doc",doc.data());
+                console.log("doc.id",doc.id);
+                data.push({
+                    id:doc.id,
+                    ...doc.data()
+                })
+                console.log("data",data);
+            })
+            return data
+        }catch(error){
+            console.log("error",error);
+            
+        }
+    }
+)
+
+
+//createpost
 export const createPost=createAsyncThunk(
     "feed/createPost",
     async(post)=>{
@@ -31,6 +60,14 @@ const feedSlice=createSlice({
         addFeed:(state,action)=>{
             console.log("action in addFeed",action.payload)
         },
+    },
+    extraReducers:(builder)=>{
+        builder.addCase(createPost.fulfilled,(state,action)=>{
+            state.feed=[action.payload,...state.feed]
+        })
+        .addCase(getposts.fulfilled,(state,action)=>{
+            state.feed=action.payload
+        })
     }
 })
 export default feedSlice.reducer
