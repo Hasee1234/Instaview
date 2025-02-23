@@ -8,7 +8,7 @@ export default function CreatePost() {
   const [caption, setCaption] = useState("");
   const [imageURL, setImageURL] = useState("");
   const [location, setLocation] = useState("")
-  const [isOpen, setIsOpen] = useState(true); // By default, modal is open
+  const [isOpen, setIsOpen] = useState(true);
 
   
   const dispatch=useDispatch()
