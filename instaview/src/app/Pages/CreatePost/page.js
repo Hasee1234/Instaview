@@ -14,24 +14,21 @@ export default function CreatePost() {
   const dispatch=useDispatch()
   
   
-const createPostHandler=()=>{
-console.log("caption",caption);
-console.log("location",location);
-console.log("imageURL",imageURL);
-
-
-let postData={
-  caption,
-  imageURL:"https://via.placeholder.com/150",
-  location,
-  createAt:new Date().toISOString,
-}
-
-dispatch(createPost(postData))
-
-
-}
-
+  const createPostHandler = () => {
+    console.log("caption", caption);
+    console.log("location", location);
+    console.log("imageURL", imageURL);
+  
+    let postData = {
+      caption,
+      imageURL: "https://via.placeholder.com/150",
+      location,
+      createdAt: new Date().toISOString(), // Fixed key name & added parentheses
+    };
+  
+    dispatch(createPost(postData));
+  };
+  
   return isOpen ? (
     <div className="fixed top-1/4 left-1/2 transform -translate-x-1/2 -translate-y-1/4 bg-white p-6 rounded-lg shadow-lg w-96 z-50 border">
       {/* Close Button */}
