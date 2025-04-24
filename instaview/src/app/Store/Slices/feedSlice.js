@@ -19,7 +19,8 @@ export const getposts=createAsyncThunk(
                 console.log("doc.id",doc.id);
                 data.push({
                     id:doc.id,
-                    ...doc.data()
+                    ...doc.data(),
+                    createAt: postData.createAt?.toDate().toISOString() || null
                 })
                 console.log("data",data);
             })

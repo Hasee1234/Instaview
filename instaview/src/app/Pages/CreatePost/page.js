@@ -9,10 +9,35 @@ export default function CreatePost() {
   const [imageURL, setImageURL] = useState("");
   const [location, setLocation] = useState("")
   const [isOpen, setIsOpen] = useState(true);
+  const [loading, setLoading] = useState(false); 
 
   
   const dispatch=useDispatch()
   
+  const uploadImage = async (e) => {
+    try {
+      setLoading(true);
+      const file = e.target.files[0];
+      const data = new FormData();
+      data.append("file", file);
+      data.append("upload_preset", "social media app");
+      data.append("cloud_name", "dd22qjrpn");
+
+      const res = await fetch("https://api.cloudinary.com/v1_1/dd22qjrpn/image/upload", {
+        method: "POST",
+        body: data,
+      });
+
+      const uploadedImage = await res.json();
+      if (uploadedImage.secure_url) {
+        setImageURL(uploadedImage.secure_url);
+      }
+    } catch (error) {
+      console.error("Image upload failed", error);
+    } finally {
+      setLoading(false);
+    }
+  };
   
   const createPostHandler = () => {
     console.log("caption", caption);
@@ -21,14 +46,14 @@ export default function CreatePost() {
   
     let postData = {
       caption,
-      imageURL: "https://via.placeholder.com/150",
+      imageURL,
       location,
       createdAt: new Date().toISOString(), // Fixed key name & added parentheses
     };
   
     dispatch(createPost(postData));
-  };
-  
+    setIsOpen(false); 
+}
   return isOpen ? (
     <div className="fixed top-1/4 left-1/2 transform -translate-x-1/2 -translate-y-1/4 bg-white p-6 rounded-lg shadow-lg w-96 z-50 border">
       {/* Close Button */}
@@ -43,7 +68,7 @@ export default function CreatePost() {
       <h2 className="text-xl font-semibold text-center mb-4">Create New Post</h2>
 
       {/* Image Upload */}
-      <input type="file" className="mb-3 w-full" />
+      <input type="file" className="mb-3 w-full" onChange={uploadImage} />
 
       {/* Caption Input */}
       <textarea

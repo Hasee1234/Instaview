@@ -30,7 +30,7 @@ export default function FeedListing() {
       {/* Post Image */}
       <div className="relative w-full h-64">
         <Image 
-          src={post?.imageUrl} 
+          src={post?.imageURL} 
           alt="Post Image" 
           layout="fill" 
           objectFit="cover" 
