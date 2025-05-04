@@ -1,11 +1,25 @@
 import { db } from "@/app/Config/firebase";
-import { addDoc, collection, getDocs } from "firebase/firestore";
+import { addDoc, collection, getDocs ,deleteDoc,doc} from "firebase/firestore";
 
 const { createSlice, createAsyncThunk } = require("@reduxjs/toolkit");
 
 
-//getpost
+// delete post 
+export const deletePost = createAsyncThunk(
+    "feed/deletePost",
+    async (id) => {
+        try {
+            const docRef = doc(db, "Posts", id);
+            await deleteDoc(docRef);
+            console.log("Document deleted with ID: ", id);
+            return id; // Return the ID of the deleted document
+        } catch (error) {
+            console.error("Error deleting document: ", error);
+        }
+    }
+);
 
+//getpost
 export const getposts=createAsyncThunk(
     "feed/getPost",
     async()=>{
@@ -20,7 +34,7 @@ export const getposts=createAsyncThunk(
                 data.push({
                     id:doc.id,
                     ...doc.data(),
-                    createAt: postData.createAt?.toDate().toISOString() || null
+                    createAt: doc.data().createAt?.toDate().toISOString() || null
                 })
                 console.log("data",data);
             })
@@ -68,6 +82,9 @@ const feedSlice=createSlice({
         })
         .addCase(getposts.fulfilled,(state,action)=>{
             state.feed=action.payload
+        })
+        .addCase(deletePost.fulfilled,(state,action)=>{
+            state.feed=state.feed.filter((post)=>post.id!==action.payload)
         })
     }
 })
