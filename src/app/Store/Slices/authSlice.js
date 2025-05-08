@@ -1,14 +1,31 @@
 import { createSlice,createAsyncThunk } from "@reduxjs/toolkit";
-import {createUserWithEmailPassword} from "firebase/auth";
+
 import { auth,db } from "../../Config/firebase";
 import { addDoc, collection, getDoc ,doc, setDoc} from 'firebase/firestore';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "@firebase/auth";
+
+export const Login=createAsyncThunk(
+    'auth/Login',
+    async(user)=>{
+        try {
+            const userCredential = await signInWithEmailAndPassword(auth,user.email,user.password)
+            const docSnap=await getDoc(doc(db,"users",userCredential.user.uid))
+            const dbUser=docSnap?.data()
+            return dbUser
+        } catch (error) {
+            console.log("error",error);
+            
+        }
+    }
+)
 
 export const signUp=createAsyncThunk(
     'auth/signUp',
     async(user)=>{
         try {
             let userCredential = await
-            createUserWithEmailPassword(auth,user.email,user.password)
+            createUserWithEmailAndPassword
+            (auth,user.email,user.password)
             let saveUserTodb={
                 email:user.email,
                 name:user.name,
@@ -40,3 +57,5 @@ const authSlice=createSlice({
       },
 
 })
+export const {setUser}=authSlice.actions
+export default authSlice.reducer
