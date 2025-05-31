@@ -1,6 +1,14 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ReduxProvider } from "./ReduxProvider/ReduxProvider";
+import { Pacifico } from "next/font/google";
+
+const pacifico = Pacifico({
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-logo",
+});
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -20,9 +28,8 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className={`${geistSans.variable} ${geistMono.variable} ${pacifico.variable} antialiased`}>
+
         <ReduxProvider>
         {children}
         </ReduxProvider>

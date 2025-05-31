@@ -7,6 +7,10 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+  logo: ['var(--font-logo)', 'cursive'], // 👈 dynamic from next/font
+},
+
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",

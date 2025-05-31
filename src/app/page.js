@@ -8,7 +8,7 @@ export default function Page() {
     <div className="grid grid-cols-[1fr_2.5fr_1.5fr] gap-1 h-screen">
       {/* Left Sidebar */}
       <div className="p-4 text-center">
-        <Leftbar />
+        <Leftbar/>
       </div>
 
       {/* Middle Section (StoryBar + Feed) */}
