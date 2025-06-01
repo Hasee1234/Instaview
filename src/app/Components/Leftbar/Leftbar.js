@@ -1,7 +1,8 @@
 "use client"
+import Link from 'next/link'; 
 import React, { useState, useEffect } from 'react';
 
-const Leftbar = () => {
+const Leftbar = ({ setShowCreatePost }) => {
   const [activeItem, setActiveItem] = useState('home'); // default active is 'home'
 
   const getButtonClass = (item) =>
@@ -21,6 +22,7 @@ const Leftbar = () => {
 
       <ul className="space-y-4">
         <li>
+          <Link href="/">
           <button className={getButtonClass('home')} onClick={() => setActiveItem('home')}>
             <span className="mr-3">
               <svg className={getIconClass('home')} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
@@ -29,6 +31,7 @@ const Leftbar = () => {
             </span>
             <span className="max-[1233px]:hidden">Home</span>
           </button>
+          </Link>
         </li>
         <li>
           <button className={getButtonClass('search')} onClick={() => setActiveItem('search')}>
@@ -40,7 +43,7 @@ const Leftbar = () => {
             </span>
             <span className="max-[1233px]:hidden">Search</span>
           </button>
-        </li>
+        </li> 
         <li>
           <button className={getButtonClass('explore')} onClick={() => setActiveItem('explore')}>
             <span className="mr-3">
@@ -89,7 +92,8 @@ const Leftbar = () => {
             <span className="max-[1233px]:hidden">Notifications</span>
           </button>
         </li>
-        <li>
+        {/* <li>
+          <Link href='/Pages/CreatePost'>
           <button className={getButtonClass('create')} onClick={() => setActiveItem('create')}>
             <span className="mr-3">
               <svg className={getIconClass('create')} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
@@ -99,7 +103,27 @@ const Leftbar = () => {
             </span>
             <span className="max-[1233px]:hidden">Create</span>
           </button>
+          </Link>
         </li>
+         */}
+        <li>
+  <button
+    className={getButtonClass('create')}
+    onClick={() => {
+      setActiveItem('create');
+      setShowCreatePost(true); // trigger modal
+    }}
+  >
+    <span className="mr-3">
+      <svg className={getIconClass('create')} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+        <line x1="12" y1="5" x2="12" y2="19" />
+        <line x1="5" y1="12" x2="19" y2="12" />
+      </svg>
+    </span>
+    <span className="max-[1233px]:hidden">Create</span>
+  </button>
+</li>
+
         <li>
           <button className={getButtonClass('profile')} onClick={() => setActiveItem('profile')}>
             <span className="mr-3">

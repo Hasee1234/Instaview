@@ -2,6 +2,7 @@
 import { signUp } from "@/app/Store/Slices/authSlice";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
+import Link from "next/link";
 
 const Page = () => {
   const [email, setEmail] = useState("");
@@ -58,46 +59,108 @@ const Page = () => {
   };
 
   return (
-    <div>
-      <h1>Signup</h1>
+    <div className="min-h-screen bg-gradient-to-br from-indigo-500 to-pink-400 flex justify-center items-center px-4">
+      <div className="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-lg space-y-6">
+        <h2 className="text-3xl font-bold text-center text-gray-800">Create an Account</h2>
 
-      <label>Enter your email:</label>
-      <input type="text" placeholder="email" onChange={(e) => setEmail(e.target.value)} />
-      <br />
+        <div className="space-y-4">
+          <input
+            type="text"
+            placeholder="Full Name"
+            onChange={(e) => setName(e.target.value)}
+            className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+          />
 
-      <label>Enter password:</label>
-      <input type="password" placeholder="password" onChange={(e) => setPassword(e.target.value)} />
-      <br />
+          <input
+            type="email"
+            placeholder="Email"
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+          />
 
-      <label>Enter your name:</label>
-      <input type="text" placeholder="name" onChange={(e) => setName(e.target.value)} />
-      <br />
+          <input
+            type="password"
+            placeholder="Password"
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+          />
 
-      <label>Enter your phone No.</label>
-      <input type="text" placeholder="phone" onChange={(e) => setPhone(e.target.value)} />
-      <br />
+          <input
+            type="text"
+            placeholder="Phone Number"
+            onChange={(e) => setPhone(e.target.value)}
+            className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+          />
 
-      <label>Enter your address:</label>
-      <input type="text" placeholder="address" onChange={(e) => setAddress(e.target.value)} />
-      <br />
+          <input
+            type="text"
+            placeholder="Address"
+            onChange={(e) => setAddress(e.target.value)}
+            className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+          />
 
-      <label>Upload Profile Picture:</label>
-      <input type="file" onChange={uploadProfilePic} />
-      {loading && <p>Uploading...</p>}
-      {profilePic && <img src={profilePic} alt="Profile Preview" width="100" />}
-      <br />
+          <div>
+            <label className="block mb-1 text-sm text-gray-700">Upload Profile Picture</label>
+            <input
+              type="file"
+              onChange={uploadProfilePic}
+              className="w-full px-2 py-2 border rounded-lg"
+            />
+            {loading && <p className="text-sm text-indigo-600 mt-2">Uploading...</p>}
+            {profilePic && (
+              <img
+                src={profilePic}
+                alt="Profile"
+                className="w-24 h-24 rounded-full mt-4 object-cover border-2 border-indigo-400"
+              />
+            )}
+          </div>
 
-      <label>Male</label>
-      <input type="radio" name="gender" value="male" onChange={() => setGender("male")} />
-      <br />
+          <div className="flex gap-4 items-center mt-2">
+            <label className="text-gray-600">Gender:</label>
+            <label className="flex items-center gap-2">
+              <input
+                type="radio"
+                name="gender"
+                value="male"
+                onChange={() => setGender("male")}
+              />
+              Male
+            </label>
+            <label className="flex items-center gap-2">
+              <input
+                type="radio"
+                name="gender"
+                value="female"
+                onChange={() => setGender("female")}
+              />
+              Female
+            </label>
+          </div>
 
-      <label>Female</label>
-      <input type="radio" name="gender" value="female" onChange={() => setGender("female")} />
-      <br />
+          <button
+            onClick={handleSignUp}
+            disabled={loading || !profilePic}
+            className={`w-full py-3 rounded-lg font-semibold text-white transition ${
+              loading || !profilePic
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-indigo-600 hover:bg-indigo-700"
+            }`}
+          >
+            Sign Up
+          </button>
 
-      <button onClick={handleSignUp} disabled={loading || !profilePic}>
-        Signup
-      </button>
+          <p className="text-center text-gray-600">
+            Already have an account?{" "}
+            <Link
+              href="/Pages/Login"
+              className="text-indigo-600 hover:underline font-medium"
+            >
+              Login
+            </Link>
+          </p>
+        </div>
+      </div>
     </div>
   );
 };
