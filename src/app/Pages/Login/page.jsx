@@ -1,17 +1,49 @@
-"use client"
-import Link from 'next/link';
-import React, { useState } from 'react';
+"use client";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import React from "react";
+import { useForm } from "react-hook-form";
+import * as Yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "@/app/Config/firebase";
+import { useDispatch } from "react-redux";
+import { setUser } from "@/app/Store/Slices/authSlice";
+
+const loginSchema = Yup.object().shape({
+  email: Yup.string().email("Invalid email format").required("Email is required"),
+  password: Yup.string().required("Password is required"),
+});
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const router = useRouter();
+  const dispatch = useDispatch();
 
-  const handleLogin = () => {
-    console.log('Login:', { email, password });
-  };
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(loginSchema),
+  });
 
-  const handleRegister = () => {
-    console.log('Register:', { email, password });
+  const onSubmit = async (data) => {
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, data.email, data.password);
+      const user = userCredential.user;
+
+      dispatch(
+        setUser({
+          uid: user.uid,
+          email: user.email,
+          displayName: user.displayName || "Anonymous",
+        })
+      );
+
+      router.push("/"); // ✅ Redirect to home after login
+    } catch (error) {
+      alert("Login failed: " + error.message);
+    }
   };
 
   return (
@@ -20,41 +52,40 @@ export default function LoginPage() {
         <h2 className="text-3xl font-bold text-center text-gray-800">Welcome Back</h2>
         <p className="text-center text-gray-500">Login to your account</p>
 
-        <div className="space-y-4">
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
-          />
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <div>
+            <input
+              type="email"
+              placeholder="Email"
+              {...register("email")}
+              className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+            />
+            {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
+          </div>
 
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
-          />
-        </div>
+          <div>
+            <input
+              type="password"
+              placeholder="Password"
+              {...register("password")}
+              className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+            />
+            {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>}
+          </div>
 
-        <button
-          onClick={handleLogin}
-          className="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition"
-        >
-          Login
-        </button>
+          <button
+            type="submit"
+            className="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition"
+          >
+            Login
+          </button>
+        </form>
 
         <div className="text-center text-sm text-gray-500">
           Don’t have an account?
-          <Link href='/Pages/Signup'>
-          <button
-            onClick={handleRegister}
-            className="ml-1 text-indigo-600 font-medium hover:underline"
-            >
+          <Link href="/Pages/Signup" className="ml-1 text-indigo-600 font-medium hover:underline">
             Register
-          </button>
-            </Link>
+          </Link>
         </div>
       </div>
     </div>
