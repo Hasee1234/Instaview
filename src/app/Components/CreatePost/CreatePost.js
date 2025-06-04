@@ -52,6 +52,8 @@ export default function CreatePost({ isOpen, onClose }) {
       createdAt: new Date().toISOString(),
       uid: user.uid,
       username: user.name || "User",
+      profilePic: user.profilePic || null, // ✅ Add this line
+
     };
 
     dispatch(createPost(postData));

@@ -25,9 +25,10 @@ const Page = () => {
   const router = useRouter();
   const [profilePic, setProfilePic] = useState("");
   const [loading, setLoading] = useState(false);
+  const [signupError, setSignupError] = useState(null);
 
-  // Correct selector based on your store key
-  const user = useSelector((state) => state.authSlice.user);
+  // Selector for user
+const { user, authChecked } = useSelector((state) => state.auth);
 
   const {
     register,
@@ -65,17 +66,27 @@ const Page = () => {
     }
   };
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
+    setSignupError(null);
     const userData = { ...data, profilePic };
-    dispatch(signUp(userData));
+    try {
+      const resultAction = await dispatch(signUp(userData));
+      if (signUp.fulfilled.match(resultAction)) {
+        // Signup success - user state updated, redirect triggered in useEffect
+        console.log("Signup success:", resultAction.payload);
+      } else {
+        setSignupError("Signup failed. Please try again.");
+      }
+    } catch (error) {
+      setSignupError(error.message || "Signup failed. Please try again.");
+    }
   };
 
-  // Redirect if user exists (logged in)
-  useEffect(() => {
-    if (user) {
-      router.push("/");
-    }
-  }, [user, router]);
+useEffect(() => {
+  if (authChecked && user) {
+    router.push("/");
+  }
+}, [authChecked, user, router]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-500 to-pink-400 flex justify-center items-center px-4">
@@ -169,6 +180,10 @@ const Page = () => {
           </div>
           {errors.gender && (
             <p className="text-red-500 text-sm">{errors.gender.message}</p>
+          )}
+
+          {signupError && (
+            <p className="text-red-600 text-center font-semibold">{signupError}</p>
           )}
 
           <button
