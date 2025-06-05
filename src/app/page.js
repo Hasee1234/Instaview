@@ -4,6 +4,7 @@ import Leftbar from "./Components/Leftbar/Leftbar";
 import StoryBar from "./Components/StoryBar/StoryBar";
 import FeedListing from "./Components/FeedListing/FeedListing";
 import CreatePost from "./Components/CreatePost/CreatePost";
+import Rightbar from "./Components/Rightbar/Rightbar";
 
 export default function Page() {
   const [showCreatePost, setShowCreatePost] = useState(false);
@@ -27,7 +28,9 @@ export default function Page() {
         </div>
 
         {/* Right Sidebar */}
-        <div className="bg-300 p-4 text-center">3</div>
+        <div className="bg-300 p-4 text-center">
+          <Rightbar/>
+        </div>
       </div>
 
       {/* Modal Overlay */}
