@@ -1,71 +1,77 @@
-"use client";
-import React, { useEffect, useState } from "react";
-import Image from "next/image";
-import { useSelector } from "react-redux";
-import { collection, getDocs, query, where } from "firebase/firestore";
-import { db } from "@/app/Config/firebase";
-import StoryModal from "./StoryModal";
-import UploadStory from "./UploadStory";
+// components/StoryBar.jsx
+'use client';
+import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchStories } from '@/app/Store/Slices/storySlice';
+import StoryUploadModal from './StoryUploadModal';
+import StoryViewer from './StoryViewer';
 
 const StoryBar = () => {
+  const dispatch = useDispatch();
+  const { stories } = useSelector((state) => state.stories);
   const user = useSelector((state) => state.auth.user);
-  const [stories, setStories] = useState([]);
-  const [showModal, setShowModal] = useState(false);
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [selectedStory, setSelectedStory] = useState(null);
 
-  const fetchStories = async () => {
-    const ref = collection(db, "Stories");
-    const timeLimit = new Date(Date.now() - 24 * 60 * 60 * 1000); // 24h ago
-    const q = query(ref, where("timestamp", ">", timeLimit));
-    const docs = await getDocs(q);
-
-    const storiesData = docs.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-    setStories(storiesData);
-  };
-
   useEffect(() => {
-    fetchStories();
-  }, []);
+    dispatch(fetchStories());
+  }, [dispatch]);
+
+  const userStory = stories.find((story) => story.uid === user?.uid);
+  const otherStories = stories.filter((story) => story.uid !== user?.uid);
 
   return (
-    <>
-      <div className="flex space-x-4 overflow-x-auto p-4 scrollbar-hide">
-        {/* Your Story */}
-        <UploadStory user={user} onUpload={fetchStories} />
-
-        {/* Other User Stories */}
-        {stories
-          .filter((s) => s.uid !== user?.uid)
-          .map((story) => (
-            <div
-              key={story.id}
-              className="flex flex-col items-center cursor-pointer relative"
-              onClick={() => {
-                setSelectedStory(story);
-                setShowModal(true);
-              }}
-            >
-              <div className="w-16 h-16 rounded-full border-2 border-red-500 p-1">
-                <Image
-                  src={story.profileImage || "/user-placeholder.jpg"}
-                  alt={story.username}
-                  width={64}
-                  height={64}
-                  className="rounded-full object-cover"
-                />
-              </div>
-              <p className="text-xs mt-1">{story.username}</p>
-            </div>
-          ))}
+    <div className="flex space-x-4 overflow-x-auto p-4 scrollbar-hide">
+      <div className="flex flex-col items-center">
+        <div
+          className="w-16 h-16 rounded-full border-2 border-blue-500 p-1 cursor-pointer"
+          onClick={() => {
+            if (userStory) {
+              setSelectedStory(userStory);
+            } else {
+              setIsUploadModalOpen(true);
+            }
+          }}
+        >
+          <Image
+            src={userStory ? userStory.mediaUrl : user?.profilePic || '/default.jpg'}
+            alt="Your Story"
+            width={64}
+            height={64}
+            className="rounded-full object-cover"
+          />
+        </div>
+        <p className="text-xs mt-1">Your Story</p>
       </div>
 
-      {showModal && selectedStory && (
-        <StoryModal story={selectedStory} onClose={() => setShowModal(false)} />
+      {otherStories.map((story) => (
+        <div
+          key={story.id}
+          className="flex flex-col items-center cursor-pointer"
+          onClick={() => setSelectedStory(story)}
+        >
+          <div className="w-16 h-16 rounded-full border-2 border-red-500 p-1">
+            <Image
+              src={story.mediaUrl}
+              alt={story.username}
+              width={64}
+              height={64}
+              className="rounded-full object-cover"
+            />
+          </div>
+          <p className="text-xs mt-1">{story.username}</p>
+        </div>
+      ))}
+
+      {isUploadModalOpen && (
+        <StoryUploadModal onClose={() => setIsUploadModalOpen(false)} />
       )}
-    </>
+
+      {selectedStory && (
+        <StoryViewer story={selectedStory} onClose={() => setSelectedStory(null)} />
+      )}
+    </div>
   );
 };
 
