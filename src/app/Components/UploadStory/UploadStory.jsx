@@ -4,8 +4,7 @@ import Image from "next/image";
 import { useSelector } from "react-redux";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "@/app/Config/firebase";
-import StoryModal from "./StoryModal";
-import UploadStory from "./UploadStory";
+import StoryModal from "../StoryModal/StoryModal";
 
 const StoryBar = () => {
   const user = useSelector((state) => state.auth.user);
