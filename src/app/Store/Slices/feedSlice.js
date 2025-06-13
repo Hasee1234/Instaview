@@ -21,51 +21,34 @@ export const deletePost = createAsyncThunk(
       }
 
       await deleteDoc(docRef);
-      console.log("Document deleted with ID: ", postId);
       return postId;
     } catch (error) {
-      console.error("Error deleting document: ", error);
       return rejectWithValue(error.message);
     }
   }
 );
 
 // get posts
-export const getposts = createAsyncThunk(
-  "feed/getPost",
-  async () => {
-    try {
-      const collectionRef = collection(db, "Posts");
-      const docs = await getDocs(collectionRef);
-      let data = [];
-      docs.forEach((doc) => {
-        data.push({
-          id: doc.id,
-          ...doc.data(),
-          createAt: doc.data().createAt?.toDate().toISOString() || null,
-        });
+export const getposts = createAsyncThunk("feed/getPost", async () => {
+  try {
+    const collectionRef = collection(db, "Posts");
+    const docs = await getDocs(collectionRef);
+    let data = [];
+    docs.forEach((doc) => {
+      data.push({
+        id: doc.id,
+        ...doc.data(),
+        createAt: doc.data().createAt?.toDate().toISOString() || null,
       });
-      return data;
-    } catch (error) {
-      console.log("error", error);
-    }
+    });
+    return data;
+  } catch (error) {
+    console.log("error", error);
+    return [];
   }
-);
+});
 
 // create post
-// export const createPost = createAsyncThunk(
-//   "feed/createPost",
-//   async (post) => {
-//     try {
-//       const collectionRef = collection(db, "Posts");
-//       await addDoc(collectionRef, post);
-//     } catch (error) {
-//       console.log("error", error);
-//     }
-//     return post;
-//   }
-// );
-
 export const createPost = createAsyncThunk(
   "feed/createPost",
   async (post, { rejectWithValue }) => {
@@ -75,23 +58,17 @@ export const createPost = createAsyncThunk(
       await addDoc(collectionRef, post);
       return post;
     } catch (error) {
-      console.log("error", error);
       return rejectWithValue(error.message);
     }
   }
 );
-
 
 const feedSlice = createSlice({
   name: "feed",
   initialState: {
     feed: [],
   },
-  reducers: {
-    addFeed: (state, action) => {
-      console.log("action in addFeed", action.payload);
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(createPost.fulfilled, (state, action) => {

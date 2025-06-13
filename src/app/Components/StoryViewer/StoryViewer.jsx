@@ -1,6 +1,6 @@
-// components/StoryViewer/StoryViewer.jsx
 'use client';
 import React, { useEffect, useRef, useState } from 'react';
+import Image from 'next/image'; // ✅ Import Next.js Image
 
 const StoryViewer = ({ story, onClose }) => {
   const [progress, setProgress] = useState(0);
@@ -11,7 +11,6 @@ const StoryViewer = ({ story, onClose }) => {
 
   useEffect(() => {
     let interval;
-
     if (!isPaused) {
       interval = setInterval(() => {
         setProgress((prev) => {
@@ -22,9 +21,8 @@ const StoryViewer = ({ story, onClose }) => {
           }
           return prev + 1;
         });
-      }, 50); // 5 seconds total
+      }, 50); // 5 seconds
     }
-
     return () => clearInterval(interval);
   }, [isPaused, onClose]);
 
@@ -67,10 +65,12 @@ const StoryViewer = ({ story, onClose }) => {
             className="w-full h-full object-cover"
           />
         ) : (
-          <img
+          <Image
             src={story.mediaUrl}
             alt={story.username}
-            className="w-full h-full object-cover"
+            fill
+            className="object-cover"
+            priority
           />
         )}
       </div>
