@@ -21,12 +21,24 @@ export const addStory = createAsyncThunk('stories/addStory', async (storyData, {
 });
 
 // Fetch all stories
+// Fetch all stories
 export const fetchStories = createAsyncThunk('stories/fetchStories', async (_, { rejectWithValue }) => {
   try {
     const q = query(collection(db, 'Stories'), orderBy('createdAt', 'desc'));
     const querySnapshot = await getDocs(q);
     const stories = [];
-    querySnapshot.forEach((doc) => stories.push({ id: doc.id, ...doc.data() }));
+
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+
+      stories.push({
+        id: doc.id,
+        ...data,
+        createdAt: data.createdAt?.toDate().toISOString() || null,
+        expiresAt: data.expiresAt?.toDate().toISOString() || null,
+      });
+    });
+
     return stories;
   } catch (error) {
     return rejectWithValue(error.message);
