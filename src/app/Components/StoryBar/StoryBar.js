@@ -9,7 +9,7 @@ import StoryViewer from '../StoryViewer/StoryViewer';
 
 const StoryBar = () => {
   const dispatch = useDispatch();
-  const { stories } = useSelector((state) => state.stories); // ✅ fixed typo: stanpmte → state
+  const { stories } = useSelector((state) => state.stories); 
   const user = useSelector((state) => state.auth.user);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [selectedStory, setSelectedStory] = useState(null);

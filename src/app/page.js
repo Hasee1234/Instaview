@@ -28,10 +28,15 @@ export default function Page() {
         </div>
 
         {/* Right Sidebar */}
-        <div className="bg-300 p-4 text-center">
+        <div className="p-4 text-center hide-rightbar ">
           <Rightbar/>
         </div>
+
+
+        
       </div>
+
+      
 
       {/* Modal Overlay */}
       <CreatePost
@@ -41,3 +46,33 @@ export default function Page() {
     </>
   );
 }
+// "use client";
+// import React, { useState } from "react";
+// import Leftbar from "./Components/Leftbar/Leftbar";
+// // import StoryBar from "./Components/StoryBar/StoryBar";
+// // import FeedListing from "./Components/FeedListing/FeedListing";
+// import CreatePost from "./Components/CreatePost/CreatePost";
+// // import Rightbar from "./Components/Rightbar/Rightbar";
+
+// export default function Page() {
+//   const [showCreatePost, setShowCreatePost] = useState(false);
+
+//   return (
+//     <>
+//       <div className="grid grid-cols-[1fr_2.5fr_1.5fr] gap-1 h-screen">
+//         {/* Left Sidebar */}
+//         <div className="p-4 text-center">
+//           <Leftbar setShowCreatePost={setShowCreatePost} />
+//         </div>
+
+
+//       </div>
+
+//       {/* Modal Overlay */}
+//       <CreatePost
+//         isOpen={showCreatePost}
+//         onClose={() => setShowCreatePost(false)}
+//       />
+//     </>
+//   );
+// }
