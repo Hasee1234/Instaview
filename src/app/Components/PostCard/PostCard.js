@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { deletePost } from "@/app/Store/Slices/feedSlice";
 import { formatDistanceToNow } from "date-fns";
 import { MoreHorizontal, Heart, MessageCircle } from "lucide-react";
-
+import defaultpic from "@/app/Assets/defaultpic.jpg"; // Ensure you have a default image in your assets
 export default function PostCard({ post }) {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth?.user || null);
@@ -29,7 +29,10 @@ export default function PostCard({ post }) {
       <div className="flex items-center justify-between px-4 py-3">
         <div className="flex items-center space-x-2">
           <img
-            src={post.profilePic || "/default-profile.png"}
+            src=
+            // {post.profilePic || defaultpic}
+                             {user?.profilePic || defaultpic}
+            
             alt="profile"
             className="w-10 h-10 rounded-full object-cover"
           />
