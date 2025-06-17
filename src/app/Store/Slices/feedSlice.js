@@ -1,6 +1,60 @@
 import { db } from "@/app/Config/firebase";
-import { addDoc, collection, getDocs, deleteDoc, doc, getDoc } from "firebase/firestore";
+import { addDoc, collection, getDocs, deleteDoc, doc, getDoc ,updateDoc, arrayUnion,arrayRemove} from "firebase/firestore";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+
+
+
+
+
+
+// Add like to post
+export const likePost = createAsyncThunk(
+  "feed/likePost",
+  async ({ postId, userId }, { rejectWithValue }) => {
+    try {
+      const postRef = doc(db, "Posts", postId);
+      await updateDoc(postRef, {
+        likes: arrayUnion(userId)
+      });
+      return { postId, userId };
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+// Remove like from post
+export const unlikePost = createAsyncThunk(
+  "feed/unlikePost",
+  async ({ postId, userId }, { rejectWithValue }) => {
+    try {
+      const postRef = doc(db, "Posts", postId);
+      await updateDoc(postRef, {
+        likes: arrayRemove(userId)
+      });
+      return { postId, userId };
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+// Add comment to post
+export const addComment = createAsyncThunk(
+  "feed/addComment",
+  async ({ postId, comment }, { rejectWithValue }) => {
+    try {
+      const postRef = doc(db, "Posts", postId);
+      await updateDoc(postRef, {
+        comments: arrayUnion(comment)
+      });
+      return { postId, comment };
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 
 // delete post with authorization check
 export const deletePost = createAsyncThunk(
@@ -82,7 +136,33 @@ const feedSlice = createSlice({
       })
       .addCase(deletePost.rejected, (state, action) => {
         console.error("Delete post failed:", action.payload);
+      })
+       .addCase(likePost.fulfilled, (state, action) => {
+        const { postId, userId } = action.payload;
+        const post = state.feed.find(post => post.id === postId);
+        if (post) {
+          if (!post.likes) post.likes = [];
+          if (!post.likes.includes(userId)) {
+            post.likes.push(userId);
+          }
+        }
+      })
+      .addCase(unlikePost.fulfilled, (state, action) => {
+        const { postId, userId } = action.payload;
+        const post = state.feed.find(post => post.id === postId);
+        if (post && post.likes) {
+          post.likes = post.likes.filter(id => id !== userId);
+        }
+      })
+      .addCase(addComment.fulfilled, (state, action) => {
+        const { postId, comment } = action.payload;
+        const post = state.feed.find(post => post.id === postId);
+        if (post) {
+          if (!post.comments) post.comments = [];
+          post.comments.push(comment);
+        }
       });
+
   },
 });
 

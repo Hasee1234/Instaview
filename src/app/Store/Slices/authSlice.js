@@ -106,7 +106,7 @@ import {
   doc,
   setDoc,
   collection,
-  getDocs
+  getDocs,updateDoc,arrayRemove,arrayUnion
 } from "firebase/firestore";
 import {
   createUserWithEmailAndPassword,
@@ -116,6 +116,50 @@ import {
 
 // ----------------- Async Thunks ------------------
 
+// authSlice.js
+export const followUser = createAsyncThunk(
+  'auth/followUser',
+  async ({ currentUserId, targetUserId }, { rejectWithValue }) => {
+    try {
+      const currentUserRef = doc(db, 'users', currentUserId);
+      const targetUserRef = doc(db, 'users', targetUserId);
+      
+      await updateDoc(currentUserRef, {
+        following: arrayUnion(targetUserId)
+      });
+      
+      await updateDoc(targetUserRef, {
+        followers: arrayUnion(currentUserId)
+      });
+      
+      return { currentUserId, targetUserId };
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const unfollowUser = createAsyncThunk(
+  'auth/unfollowUser',
+  async ({ currentUserId, targetUserId }, { rejectWithValue }) => {
+    try {
+      const currentUserRef = doc(db, 'users', currentUserId);
+      const targetUserRef = doc(db, 'users', targetUserId);
+      
+      await updateDoc(currentUserRef, {
+        following: arrayRemove(targetUserId)
+      });
+      
+      await updateDoc(targetUserRef, {
+        followers: arrayRemove(currentUserId)
+      });
+      
+      return { currentUserId, targetUserId };
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
 // Signup
 export const signUp = createAsyncThunk(
   "auth/signUp",
