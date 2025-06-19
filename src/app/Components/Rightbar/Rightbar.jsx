@@ -19,15 +19,15 @@
 //     setMounted(true); // Ensures client-only rendering
 //   }, [dispatch]);
 
-//   const handleLogout = async () => {
-//     await dispatch(logout());
-//     router.push("/Pages/Signup");
-//   };
-//   const otherUsers = users
-//     ?.filter((user) => user.uid !== currentUser?.uid)
-//     .slice(0, 5);
+  // const handleLogout = async () => {
+  //   await dispatch(logout());
+  //   router.push("/Pages/Signup");
+  // };
+  // const otherUsers = users
+  //   ?.filter((user) => user.uid !== currentUser?.uid)
+  //   .slice(0, 5);
 
-//   if (!mounted) return null; // Skip rendering until mounted on client
+  // if (!mounted) return null; // Skip rendering until mounted on client
 
 //   return (
 //     <div className="px-2 pt-4">
@@ -82,6 +82,8 @@
 //     </div>
 //   );
 // }
+
+
 "use client";
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
@@ -89,11 +91,13 @@ import { logout, fetchAllUsers, followUser, unfollowUser } from "@/app/Store/Sli
 import { useRouter } from "next/navigation";
 import defaultPic from "@/app/Assets/defaultpic.jpg";
 import { UserPlus, UserCheck } from "lucide-react";
+import Link from "next/link";
 
 export default function Rightbar() {
   const dispatch = useDispatch();
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
+  const [localFollowing, setLocalFollowing] = useState([]);
 
   const currentUser = useSelector((state) => state.auth.user);
   const users = useSelector((state) => state.auth.allUsers);
@@ -103,24 +107,38 @@ export default function Rightbar() {
     setMounted(true);
   }, [dispatch]);
 
-  const handleFollow = async (targetUserId) => {
+  useEffect(() => {
+    if (currentUser?.following) {
+      setLocalFollowing(currentUser.following);
+    }
+  }, [currentUser]);
+
+  const handleFollow = async (targetUserId, e) => {
+    e.stopPropagation(); // Prevent event bubbling to the profile click
     if (!currentUser?.uid) return;
     
     try {
-      if (currentUser.following?.includes(targetUserId)) {
+      if (localFollowing.includes(targetUserId)) {
         await dispatch(unfollowUser({
           currentUserId: currentUser.uid,
           targetUserId
         })).unwrap();
+        setLocalFollowing(prev => prev.filter(id => id !== targetUserId));
       } else {
         await dispatch(followUser({
           currentUserId: currentUser.uid,
           targetUserId
         })).unwrap();
+        setLocalFollowing(prev => [...prev, targetUserId]);
       }
     } catch (error) {
       console.error("Follow action failed:", error);
     }
+  };
+
+  const handleLogout = async () => {
+    await dispatch(logout());
+    router.push("/Pages/Signup");
   };
 
   const otherUsers = users
@@ -133,7 +151,22 @@ export default function Rightbar() {
     <div className="px-2 pt-4">
       {/* Current User */}
       <div className="flex items-center justify-between w-[319px] h-[44px] mb-4">
-        {/* ... existing current user code ... */}
+        <div className="flex items-center">
+          <img
+            src={currentUser?.profilePic || defaultPic}
+            alt="profile"
+            className="w-10 h-10 rounded-full object-cover"
+          />
+          <span className="ml-3 font-semibold">
+            {currentUser?.name || currentUser?.username || "User"}
+          </span>
+        </div>
+        <button
+          onClick={handleLogout}
+          className="text-blue-500 text-sm hover:underline"
+        >
+          Logout
+        </button>
       </div>
 
       {/* Suggested Section */}
@@ -142,11 +175,12 @@ export default function Rightbar() {
       {/* Other Users */}
       {otherUsers?.length > 0 ? (
         otherUsers.map((user) => {
-          const isFollowing = currentUser?.following?.includes(user.uid);
+          const isFollowing = localFollowing.includes(user.uid);
           return (
-            <div
-              key={user.uid}
-              className="flex items-center justify-between w-[319px] h-[44px] mb-2"
+            <div 
+              key={user.uid} 
+              className="flex items-center justify-between w-[319px] h-[44px] mb-2 hover:bg-gray-100 rounded-md p-1 cursor-pointer"
+              onClick={() => router.push(`/Pages/SearchProfile/${user.uid}`)}
             >
               <div className="flex items-center">
                 <img
@@ -154,25 +188,30 @@ export default function Rightbar() {
                   alt="profile"
                   className="w-10 h-10 rounded-full object-cover"
                 />
-                <span className="ml-3 font-semibold text-sm">
-                  {user.name || user.username}
-                </span>
+                <div className="ml-3">
+                  <p className="font-semibold text-sm">
+                    {user.name || user.username}
+                  </p>
+                  <p className="text-xs text-gray-500">Suggested for you</p>
+                </div>
               </div>
               <button 
-                onClick={() => handleFollow(user.uid)}
-                className={`text-sm flex items-center gap-1 ${
-                  isFollowing ? 'text-gray-600' : 'text-blue-500'
+                onClick={(e) => handleFollow(user.uid, e)}
+                className={`text-sm flex items-center gap-1 px-3 py-1 rounded-md ${
+                  isFollowing 
+                    ? 'text-gray-600 bg-gray-100 hover:bg-gray-200' 
+                    : 'text-blue-500 hover:text-blue-600'
                 }`}
               >
                 {isFollowing ? (
                   <>
                     <UserCheck className="w-4 h-4" />
-                    <span>Following</span>
+                    <span className="hidden sm:inline">Following</span>
                   </>
                 ) : (
                   <>
                     <UserPlus className="w-4 h-4" />
-                    <span>Follow</span>
+                    <span className="hidden sm:inline">Follow</span>
                   </>
                 )}
               </button>
