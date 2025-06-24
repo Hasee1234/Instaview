@@ -1,28 +1,39 @@
+
 import { db } from "@/app/Config/firebase";
-import { addDoc, collection, getDocs, deleteDoc, doc, getDoc ,updateDoc, arrayUnion,arrayRemove} from "firebase/firestore";
+import { addDoc, collection, getDocs, deleteDoc, doc, getDoc, updateDoc, arrayUnion, arrayRemove,query, where, orderBy  } from "firebase/firestore";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-
-
-
-
-
-// Add like to post
+// Add like to post and create notification
 export const likePost = createAsyncThunk(
   "feed/likePost",
-  async ({ postId, userId }, { rejectWithValue }) => {
+  async ({ postId, userId, postOwnerId }, { rejectWithValue, dispatch }) => {
     try {
       const postRef = doc(db, "Posts", postId);
       await updateDoc(postRef, {
         likes: arrayUnion(userId)
       });
+
+      // Only create notification if user is liking someone else's post
+      if (userId !== postOwnerId) {
+        const notification = {
+          type: "like",
+          senderId: userId,
+          receiverId: postOwnerId, // Make sure this is defined
+          postId,
+          timestamp: new Date().toISOString(),
+          read: false,
+          message: "liked your post"
+        };
+        
+        await addDoc(collection(db, "notifications"), notification);
+      }
+
       return { postId, userId };
     } catch (error) {
       return rejectWithValue(error.message);
     }
   }
 );
-
 // Remove like from post
 export const unlikePost = createAsyncThunk(
   "feed/unlikePost",
@@ -39,11 +50,26 @@ export const unlikePost = createAsyncThunk(
   }
 );
 
-// Add comment to post
+// Add comment to post and create notification
 export const addComment = createAsyncThunk(
   "feed/addComment",
-  async ({ postId, comment }, { rejectWithValue }) => {
+  async ({ postId, comment, postOwnerId }, { rejectWithValue, dispatch }) => {
     try {
+      // Only create notification if user is commenting on someone else's post
+      if (comment.userId !== postOwnerId) {
+        const notification = {
+          type: "comment",
+          senderId: comment.userId,
+          receiverId: postOwnerId,
+          postId,
+          commentText: comment.text,
+          timestamp: new Date().toISOString(),
+          read: false
+        };
+        
+        await addDoc(collection(db, "notifications"), notification);
+      }
+
       const postRef = doc(db, "Posts", postId);
       await updateDoc(postRef, {
         comments: arrayUnion(comment)
@@ -55,8 +81,42 @@ export const addComment = createAsyncThunk(
   }
 );
 
+// Follow user and create notification
+export const followUser = createAsyncThunk(
+  "feed/followUser",
+  async ({ followerId, followedId }, { rejectWithValue }) => {
+    try {
+      // Create follow notification
+      const notification = {
+        type: "follow",
+        senderId: followerId,
+        receiverId: followedId,
+        timestamp: new Date().toISOString(),
+        read: false
+      };
+      
+      await addDoc(collection(db, "notifications"), notification);
 
-// delete post with authorization check
+      // Update both users' follow data
+      const followerRef = doc(db, "Users", followerId);
+      const followedRef = doc(db, "Users", followedId);
+
+      await updateDoc(followerRef, {
+        following: arrayUnion(followedId)
+      });
+
+      await updateDoc(followedRef, {
+        followers: arrayUnion(followerId)
+      });
+
+      return { followerId, followedId };
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+// Delete post with authorization check
 export const deletePost = createAsyncThunk(
   "feed/deletePost",
   async ({ postId, currentUserUid }, { rejectWithValue }) => {
@@ -82,7 +142,7 @@ export const deletePost = createAsyncThunk(
   }
 );
 
-// get posts
+// Get posts
 export const getposts = createAsyncThunk("feed/getPost", async () => {
   try {
     const collectionRef = collection(db, "Posts");
@@ -102,7 +162,7 @@ export const getposts = createAsyncThunk("feed/getPost", async () => {
   }
 });
 
-// create post
+// Create post
 export const createPost = createAsyncThunk(
   "feed/createPost",
   async (post, { rejectWithValue }) => {
@@ -117,12 +177,68 @@ export const createPost = createAsyncThunk(
   }
 );
 
+// Get notifications for user
+export const getNotifications = createAsyncThunk(
+  "feed/getNotifications",
+  async (userId, { rejectWithValue }) => {
+    try {
+      const q = query(
+        collection(db, "notifications"),
+        where("receiverId", "==", userId),
+        orderBy("timestamp", "desc")
+      );
+      
+      const querySnapshot = await getDocs(q);
+      const notifications = [];
+      querySnapshot.forEach((doc) => {
+        notifications.push({
+          id: doc.id,
+          ...doc.data()
+        });
+      });
+      
+      return notifications;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+// Mark notification as read
+export const markNotificationAsRead = createAsyncThunk(
+  "feed/markNotificationAsRead",
+  async (notificationId, { rejectWithValue }) => {
+    try {
+      const notificationRef = doc(db, "notifications", notificationId);
+      await updateDoc(notificationRef, {
+        read: true
+      });
+      return notificationId;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 const feedSlice = createSlice({
   name: "feed",
   initialState: {
     feed: [],
+    notifications: [],
+    unreadNotifications: 0
   },
-  reducers: {},
+  reducers: {
+     addNotification: (state, action) => {
+      state.notifications.unshift(action.payload);
+      state.unreadNotifications += 1;
+    },
+    incrementUnreadNotifications: (state) => {
+      state.unreadNotifications += 1;
+    },
+    resetUnreadNotifications: (state) => {
+      state.unreadNotifications = 0;
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(createPost.fulfilled, (state, action) => {
@@ -137,7 +253,7 @@ const feedSlice = createSlice({
       .addCase(deletePost.rejected, (state, action) => {
         console.error("Delete post failed:", action.payload);
       })
-       .addCase(likePost.fulfilled, (state, action) => {
+      .addCase(likePost.fulfilled, (state, action) => {
         const { postId, userId } = action.payload;
         const post = state.feed.find(post => post.id === postId);
         if (post) {
@@ -161,9 +277,23 @@ const feedSlice = createSlice({
           if (!post.comments) post.comments = [];
           post.comments.push(comment);
         }
+      })
+      .addCase(followUser.fulfilled, (state, action) => {
+        // Handle follow state updates if needed
+      })
+      .addCase(getNotifications.fulfilled, (state, action) => {
+        state.notifications = action.payload;
+        state.unreadNotifications = action.payload.filter(n => !n.read).length;
+      })
+      .addCase(markNotificationAsRead.fulfilled, (state, action) => {
+        const notification = state.notifications.find(n => n.id === action.payload);
+        if (notification) {
+          notification.read = true;
+          state.unreadNotifications = state.notifications.filter(n => !n.read).length;
+        }
       });
-
   },
 });
 
+export const {addNotification, incrementUnreadNotifications, resetUnreadNotifications } = feedSlice.actions;
 export default feedSlice.reducer;
