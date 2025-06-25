@@ -296,6 +296,11 @@ export default function PostCard({ post }) {
   const commentCount = localPost.comments?.length || 0;
   const isFollowing = user?.following?.includes(localPost.uid);
 
+  // Helper to get the best available username
+  const getUsername = (userObj) => {
+    return userObj?.username || userObj?.displayName || userObj?.name ||  "Someone";
+  };
+
   const handleDelete = (id) => {
     if (user) {
       dispatch(deletePost({ postId: id, currentUserUid: user.uid }));
@@ -322,9 +327,9 @@ export default function PostCard({ post }) {
             id: `follow-${localPost.uid}-${Date.now()}`,
             type: "follow",
             senderId: user.uid,
-            senderName: user.displayName || user.name || "Someone",
+            senderName: getUsername(user),
             receiverId: localPost.uid,
-            message: "started following you",
+            postId: localPost.id,
             timestamp: new Date().toISOString(),
             read: false
           }));
@@ -356,10 +361,9 @@ export default function PostCard({ post }) {
             id: `like-${localPost.id}-${Date.now()}`,
             type: "like",
             senderId: user.uid,
-            senderName: user.displayName || user.name || "Someone",
+            senderName: getUsername(user),
             receiverId: localPost.uid,
             postId: localPost.id,
-            message: "liked your post",
             timestamp: new Date().toISOString(),
             read: false
           }));
@@ -378,7 +382,7 @@ export default function PostCard({ post }) {
     const newComment = {
       id: `${localPost.id}-${user.uid}-${Date.now()}`,
       userId: user.uid,
-      username: user.displayName || user.name || "User",
+      username: getUsername(user),
       text: commentText.trim(),
       createdAt: new Date().toISOString()
     };
@@ -395,10 +399,9 @@ export default function PostCard({ post }) {
           id: `comment-${localPost.id}-${Date.now()}`,
           type: "comment",
           senderId: user.uid,
-          senderName: user.displayName || user.name || "Someone",
+          senderName: getUsername(user),
           receiverId: localPost.uid,
           postId: localPost.id,
-          message: `commented: "${commentText.trim()}"`,
           commentText: commentText.trim(),
           timestamp: new Date().toISOString(),
           read: false
