@@ -298,9 +298,10 @@ const Leftbar = ({ setShowCreatePost }) => {
           </li>
 
           <li>
-            <button className={getButtonClass("/reels")}>
+            <Link href="/Pages/Reels">
+            <button className={getButtonClass("/Pages/Reels")}>
               <span className="mr-3">
-                <svg className={getIconClass("/reels")} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <svg className={getIconClass("/Pages/Reels")} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                   <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18" />
                   <line x1="7" y1="2" x2="7" y2="22" />
                   <line x1="17" y1="2" x2="17" y2="22" />
@@ -311,6 +312,7 @@ const Leftbar = ({ setShowCreatePost }) => {
               </span>
               <span className="max-[1233px]:hidden">Reels</span>
             </button>
+            </Link>
           </li>
 
           <li>

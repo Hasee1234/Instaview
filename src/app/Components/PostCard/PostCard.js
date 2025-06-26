@@ -426,6 +426,11 @@ export default function PostCard({ post }) {
     ? formatDistanceToNow(new Date(localPost.createdAt), { addSuffix: true })
     : "";
 
+    const isVideoUrl = (url) => {
+  return url && /\.(mp4|webm|ogg)$/i.test(url);
+};
+
+
   return (
     <div className="bg-white border-x border-gray-300 rounded-md shadow-sm mb-6 w-full max-w-xl mx-auto">
       {/* Header */}
@@ -471,14 +476,23 @@ export default function PostCard({ post }) {
 
       {/* Post Media */}
       {localPost.imageURL && (
-        <div className="w-full aspect-square bg-black flex items-center justify-center">
-          <img
-            src={localPost.imageURL}
-            alt="Post"
-            className="object-contain max-h-full max-w-full"
-          />
-        </div>
-      )}
+  <div className="w-full aspect-square bg-black flex items-center justify-center">
+    {isVideoUrl(localPost.imageURL) ? (
+      <video
+        src={localPost.imageURL}
+        controls
+        className="object-contain max-h-full max-w-full"
+        style={{ background: "black" }}
+      />
+    ) : (
+      <img
+        src={localPost.imageURL}
+        alt="Post"
+        className="object-contain max-h-full max-w-full"
+      />
+    )}
+  </div>
+)}
 
       {/* Action Buttons */}
       <div className="px-4 py-3 flex space-x-4">

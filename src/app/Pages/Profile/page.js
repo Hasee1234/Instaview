@@ -9,6 +9,14 @@ import { Heart, MessageCircle, X } from "lucide-react";
 import Link from "next/link";
 import defaultPic from "@/app/Assets/defaultpic.jpg";
 
+const isVideoPost = (post) => {
+  const url = post.mediaUrl || post.imageURL || "";
+  return (
+    post.mediaType === "video" ||
+    /\.(mp4|webm|ogg)$/i.test(url)
+  );
+};
+
 const Page = () => {
   const { user } = useSelector((state) => state.auth);
   const [posts, setPosts] = useState([]);
@@ -130,7 +138,7 @@ const Page = () => {
             </div>
 
             {/* Post Grid */}
-            {posts.length === 0 ? (
+            {/* {posts.length === 0 ? (
               <p className="text-center text-gray-500">No posts yet.</p>
             ) : (
               <div className="grid grid-cols-3 gap-1">
@@ -173,7 +181,58 @@ const Page = () => {
             )}
           </div>
         </div>
+      </div> */}
+
+             {posts.length === 0 ? (
+              <p className="text-center text-gray-500">No posts yet.</p>
+            ) : (
+              <div className="grid grid-cols-3 gap-1">
+                {posts.map((post) => {
+                  const mediaUrl = post.mediaUrl || post.imageURL || "";
+                  const isVideo = isVideoPost(post);
+                  return (
+                    <div
+                      key={post.id}
+                      onClick={() => setSelectedPost(post)}
+                      className="relative aspect-square bg-gray-100 overflow-hidden group cursor-pointer"
+                    >
+                      {isVideo ? (
+                        <video
+                          src={mediaUrl}
+                          className="w-full h-full object-cover bg-black"
+                          muted
+                          loop
+                          playsInline
+                          preload="metadata"
+                        />
+                      ) : (
+                        <img
+                          src={mediaUrl}
+                          alt="Post"
+                          className="w-full h-full object-cover"
+                        />
+                      )}
+                      <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
+                        <div className="flex items-center text-white space-x-6">
+                          <div className="flex items-center">
+                            <Heart className="w-5 h-5 fill-white" />
+                            <span className="ml-1">{post.likes?.length || 0}</span>
+                          </div>
+                          <div className="flex items-center">
+                            <MessageCircle className="w-5 h-5" />
+                            <span className="ml-1">{post.comments?.length || 0}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </div>
       </div>
+
 
       {/* Create Post Modal */}
       <CreatePost
@@ -182,26 +241,27 @@ const Page = () => {
       />
 
       {/* Enhanced Post Modal */}
-      {selectedPost && (
+         {selectedPost && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col md:flex-row">
             {/* Media Section */}
             <div className="md:w-2/3 bg-black flex items-center justify-center">
-              {selectedPost.mediaType === "video" ? (
+              {isVideoPost(selectedPost) ? (
                 <video
-                  src={selectedPost.mediaUrl}
+                  src={selectedPost.mediaUrl || selectedPost.imageURL || ""}
                   className="max-h-[80vh] object-contain"
                   controls
                   autoPlay
                 />
               ) : (
                 <img
-                  src={selectedPost.mediaUrl || selectedPost.imageURL}
+                  src={selectedPost.mediaUrl || selectedPost.imageURL || ""}
                   alt="Post"
                   className="max-h-[80vh] object-contain"
                 />
               )}
             </div>
+
             
             {/* Details Section */}
             <div className="md:w-1/3 flex flex-col border-l">
