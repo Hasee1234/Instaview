@@ -249,7 +249,7 @@ export default function ReelCard({
 
   return (
     <div className="relative flex justify-center items-center w-full" style={{ minHeight: 650 }}>
-      <div className="relative w-[350px] h-[600px] bg-black rounded-xl overflow-hidden flex items-center justify-center">
+      <div className="relative w-[350px] h-[560px] bg-black rounded-xl overflow-hidden flex items-center justify-center">
         {/* Video */}
         <video
           ref={videoRef}
@@ -257,6 +257,7 @@ export default function ReelCard({
           className="w-full h-full object-cover"
           loop
           playsInline
+          autoPlay
           muted={activeReel !== post.id}
           onClick={() => setActiveReel(post.id)}
           onPlay={() => setActiveReel(post.id)}

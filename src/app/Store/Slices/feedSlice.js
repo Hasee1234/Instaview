@@ -1,12 +1,148 @@
 
+// import { db } from "@/app/Config/firebase";
+// import { addDoc, collection, getDocs, deleteDoc, doc, getDoc, updateDoc, arrayUnion, arrayRemove,query, where, orderBy  } from "firebase/firestore";
+// import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+
+// // Add like to post and create notification
+// export const likePost = createAsyncThunk(
+//   "feed/likePost",
+//   async ({ postId, userId, postOwnerId }, { rejectWithValue, dispatch }) => {
+//     try {
+//       const postRef = doc(db, "Posts", postId);
+//       await updateDoc(postRef, {
+//         likes: arrayUnion(userId)
+//       });
+
+//       // Only create notification if user is liking someone else's post
+//       if (userId !== postOwnerId) {
+//         // Get the sender's user data
+//         const userDoc = await getDoc(doc(db, "Users", userId));
+//         const userData = userDoc.exists() ? userDoc.data() : null;
+
+//         const notification = {
+//           type: "like",
+//           senderId: userId,
+//           senderName: userData?.username || userData?.displayName || "User",
+//           receiverId: postOwnerId,
+//           postId,
+//           timestamp: new Date().toISOString(),
+//           read: false,
+//           message: "liked your post"
+//         };
+        
+//         await addDoc(collection(db, "notifications"), notification);
+//       }
+
+//       return { postId, userId };
+//     } catch (error) {
+//       return rejectWithValue(error.message);
+//     }
+//   }
+// );
+
+// // Remove like from post
+// export const unlikePost = createAsyncThunk(
+//   "feed/unlikePost",
+//   async ({ postId, userId }, { rejectWithValue }) => {
+//     try {
+//       const postRef = doc(db, "Posts", postId);
+//       await updateDoc(postRef, {
+//         likes: arrayRemove(userId)
+//       });
+//       return { postId, userId };
+//     } catch (error) {
+//       return rejectWithValue(error.message);
+//     }
+//   }
+// );
+
+// // Add comment to post and create notification
+// export const addComment = createAsyncThunk(
+//   "feed/addComment",
+//   async ({ postId, comment, postOwnerId }, { rejectWithValue, dispatch }) => {
+//     try {
+//       // Only create notification if user is commenting on someone else's post
+//       if (comment.userId !== postOwnerId) {
+//         // Get the sender's user data
+//         const userDoc = await getDoc(doc(db, "Users", comment.userId));
+//         const userData = userDoc.exists() ? userDoc.data() : null;
+
+//         const notification = {
+//           type: "comment",
+//           senderId: comment.userId,
+//           senderName: userData?.username || userData?.displayName || "User",
+//           receiverId: postOwnerId,
+//           postId,
+//           commentText: comment.text,
+//           timestamp: new Date().toISOString(),
+//           read: false
+//         };
+        
+//         await addDoc(collection(db, "notifications"), notification);
+//       }
+
+//       const postRef = doc(db, "Posts", postId);
+//       await updateDoc(postRef, {
+//         comments: arrayUnion(comment)
+//       });
+//       return { postId, comment };
+//     } catch (error) {
+//       return rejectWithValue(error.message);
+//     }
+//   }
+// );
+
+
+// // Follow user and create notification
+// export const followUser = createAsyncThunk(
+//   "feed/followUser",
+//   async ({ followerId, followedId }, { rejectWithValue }) => {
+//     try {
+//       // Get the follower's user data
+//       const followerDoc = await getDoc(doc(db, "Users", followerId));
+//       const followerData = followerDoc.exists() ? followerDoc.data() : null;
+
+//       // Create follow notification
+//       const notification = {
+//         type: "follow",
+//         senderId: followerId,
+//         senderName: followerData?.username || followerData?.displayName || "User",
+//         receiverId: followedId,
+//         timestamp: new Date().toISOString(),
+//         read: false
+//       };
+      
+//       await addDoc(collection(db, "notifications"), notification);
+
+//       // Update both users' follow data
+//       const followerRef = doc(db, "Users", followerId);
+//       const followedRef = doc(db, "Users", followedId);
+
+//       await updateDoc(followerRef, {
+//         following: arrayUnion(followedId)
+//       });
+
+//       await updateDoc(followedRef, {
+//         followers: arrayUnion(followerId)
+//       });
+
+//       return { followerId, followedId };
+//     } catch (error) {
+//       return rejectWithValue(error.message);
+//     }
+//   }
+// );
+
+
+
 import { db } from "@/app/Config/firebase";
-import { addDoc, collection, getDocs, deleteDoc, doc, getDoc, updateDoc, arrayUnion, arrayRemove,query, where, orderBy  } from "firebase/firestore";
+import { addDoc, collection, getDocs, deleteDoc, doc, getDoc, updateDoc, arrayUnion, arrayRemove, query, where, orderBy } from "firebase/firestore";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 // Add like to post and create notification
 export const likePost = createAsyncThunk(
   "feed/likePost",
-  async ({ postId, userId, postOwnerId }, { rejectWithValue, dispatch }) => {
+  async ({ postId, userId, postOwnerId, senderName }, { rejectWithValue }) => {
     try {
       const postRef = doc(db, "Posts", postId);
       await updateDoc(postRef, {
@@ -18,13 +154,13 @@ export const likePost = createAsyncThunk(
         const notification = {
           type: "like",
           senderId: userId,
-          receiverId: postOwnerId, // Make sure this is defined
+          senderName: senderName || "User",
+          receiverId: postOwnerId,
           postId,
           timestamp: new Date().toISOString(),
           read: false,
           message: "liked your post"
         };
-        
         await addDoc(collection(db, "notifications"), notification);
       }
 
@@ -34,6 +170,7 @@ export const likePost = createAsyncThunk(
     }
   }
 );
+
 // Remove like from post
 export const unlikePost = createAsyncThunk(
   "feed/unlikePost",
@@ -53,20 +190,20 @@ export const unlikePost = createAsyncThunk(
 // Add comment to post and create notification
 export const addComment = createAsyncThunk(
   "feed/addComment",
-  async ({ postId, comment, postOwnerId }, { rejectWithValue, dispatch }) => {
+  async ({ postId, comment, postOwnerId, senderName }, { rejectWithValue }) => {
     try {
       // Only create notification if user is commenting on someone else's post
       if (comment.userId !== postOwnerId) {
         const notification = {
           type: "comment",
           senderId: comment.userId,
+          senderName: senderName || comment.username || "User",
           receiverId: postOwnerId,
           postId,
           commentText: comment.text,
           timestamp: new Date().toISOString(),
           read: false
         };
-        
         await addDoc(collection(db, "notifications"), notification);
       }
 
@@ -84,17 +221,17 @@ export const addComment = createAsyncThunk(
 // Follow user and create notification
 export const followUser = createAsyncThunk(
   "feed/followUser",
-  async ({ followerId, followedId }, { rejectWithValue }) => {
+  async ({ followerId, followedId, senderName }, { rejectWithValue }) => {
     try {
       // Create follow notification
       const notification = {
         type: "follow",
         senderId: followerId,
+        senderName: senderName || "User",
         receiverId: followedId,
         timestamp: new Date().toISOString(),
         read: false
       };
-      
       await addDoc(collection(db, "notifications"), notification);
 
       // Update both users' follow data
@@ -115,6 +252,11 @@ export const followUser = createAsyncThunk(
     }
   }
 );
+
+// ...rest of your slice code remains unchanged...
+
+
+
 
 // Delete post with authorization check
 export const deletePost = createAsyncThunk(

@@ -316,6 +316,7 @@ const Leftbar = ({ setShowCreatePost }) => {
           </li>
 
           <li>
+            <Link href="/Pages/Messages">
             <button className={getButtonClass("/messages")}>
               <span className="mr-3">
                 <svg className={getIconClass("/messages")} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
@@ -324,6 +325,7 @@ const Leftbar = ({ setShowCreatePost }) => {
               </span>
               <span className="max-[1233px]:hidden">Messages</span>
             </button>
+            </Link>
           </li>
 
           <li>

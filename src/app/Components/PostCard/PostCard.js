@@ -1,8 +1,13 @@
-
 // "use client";
 // import React, { useState, useEffect } from "react";
 // import { useDispatch, useSelector } from "react-redux";
-// import { deletePost, likePost, unlikePost, addComment } from "@/app/Store/Slices/feedSlice";
+// import { 
+//   deletePost, 
+//   likePost, 
+//   unlikePost, 
+//   addComment,
+//   addNotification
+// } from "@/app/Store/Slices/feedSlice";
 // import { followUser, unfollowUser } from "@/app/Store/Slices/authSlice";
 // import { formatDistanceToNow } from "date-fns";
 // import { MoreHorizontal, Heart, MessageCircle, Send } from "lucide-react";
@@ -18,7 +23,6 @@
 //   const [showCommentInput, setShowCommentInput] = useState(false);
 //   const [isAddingComment, setIsAddingComment] = useState(false);
 
-//   // Safely get the post from Redux store
 //   const reduxPost = useSelector(state => {
 //     const postsArray = state.feed?.posts || [];
 //     return postsArray.find(p => p.id === post.id) || post;
@@ -33,6 +37,11 @@
 //   const likeCount = localPost.likes?.length || 0;
 //   const commentCount = localPost.comments?.length || 0;
 //   const isFollowing = user?.following?.includes(localPost.uid);
+
+//   // Helper to get the best available username
+//   const getUsername = (userObj) => {
+//     return userObj?.username || userObj?.displayName || userObj?.name ||  "Someone";
+//   };
 
 //   const handleDelete = (id) => {
 //     if (user) {
@@ -54,6 +63,19 @@
 //           currentUserId: user.uid,
 //           targetUserId: localPost.uid
 //         })).unwrap();
+        
+//         if (user.uid !== localPost.uid) {
+//           dispatch(addNotification({
+//             id: `follow-${localPost.uid}-${Date.now()}`,
+//             type: "follow",
+//             senderId: user.uid,
+//             senderName: getUsername(user),
+//             receiverId: localPost.uid,
+//             postId: localPost.id,
+//             timestamp: new Date().toISOString(),
+//             read: false
+//           }));
+//         }
 //       }
 //     } catch (error) {
 //       console.error("Follow action failed:", error);
@@ -61,13 +83,33 @@
 //   };
 
 //   const handleLike = async () => {
-//     if (!user) return;
+//     if (!user || !localPost.uid) return;
 
 //     try {
 //       if (isLiked) {
-//         await dispatch(unlikePost({ postId: localPost.id, userId: user.uid })).unwrap();
+//         await dispatch(unlikePost({ 
+//           postId: localPost.id, 
+//           userId: user.uid 
+//         })).unwrap();
 //       } else {
-//         await dispatch(likePost({ postId: localPost.id, userId: user.uid })).unwrap();
+//         await dispatch(likePost({ 
+//           postId: localPost.id, 
+//           userId: user.uid,
+//           postOwnerId: localPost.uid
+//         })).unwrap();
+
+//         if (user.uid !== localPost.uid) {
+//           dispatch(addNotification({
+//             id: `like-${localPost.id}-${Date.now()}`,
+//             type: "like",
+//             senderId: user.uid,
+//             senderName: getUsername(user),
+//             receiverId: localPost.uid,
+//             postId: localPost.id,
+//             timestamp: new Date().toISOString(),
+//             read: false
+//           }));
+//         }
 //       }
 //     } catch (error) {
 //       console.error("Like action failed:", error);
@@ -79,11 +121,10 @@
 //     if (!user || !commentText.trim() || isAddingComment) return;
 
 //     setIsAddingComment(true);
-//     const timestamp = Date.now();
 //     const newComment = {
-//       id: `${localPost.id}-${user.uid}-${timestamp}`,
+//       id: `${localPost.id}-${user.uid}-${Date.now()}`,
 //       userId: user.uid,
-//       username: user.name || "User",
+//       username: getUsername(user),
 //       text: commentText.trim(),
 //       createdAt: new Date().toISOString()
 //     };
@@ -91,8 +132,23 @@
 //     try {
 //       await dispatch(addComment({
 //         postId: localPost.id,
-//         comment: newComment
+//         comment: newComment,
+//         postOwnerId: localPost.uid
 //       })).unwrap();
+
+//       if (user.uid !== localPost.uid) {
+//         dispatch(addNotification({
+//           id: `comment-${localPost.id}-${Date.now()}`,
+//           type: "comment",
+//           senderId: user.uid,
+//           senderName: getUsername(user),
+//           receiverId: localPost.uid,
+//           postId: localPost.id,
+//           commentText: commentText.trim(),
+//           timestamp: new Date().toISOString(),
+//           read: false
+//         }));
+//       }
 
 //       setCommentText("");
 //       setShowCommentInput(false);
@@ -102,7 +158,7 @@
 //       setIsAddingComment(false);
 //     }
 //   };
-
+  
 //   const handleCommentButtonClick = () => {
 //     setShowComments(true);
 //     setShowCommentInput(true);
@@ -111,6 +167,11 @@
 //   const timeAgo = localPost.createdAt
 //     ? formatDistanceToNow(new Date(localPost.createdAt), { addSuffix: true })
 //     : "";
+
+//     const isVideoUrl = (url) => {
+//   return url && /\.(mp4|webm|ogg)$/i.test(url);
+// };
+
 
 //   return (
 //     <div className="bg-white border-x border-gray-300 rounded-md shadow-sm mb-6 w-full max-w-xl mx-auto">
@@ -157,14 +218,23 @@
 
 //       {/* Post Media */}
 //       {localPost.imageURL && (
-//         <div className="w-full aspect-square bg-black flex items-center justify-center">
-//           <img
-//             src={localPost.imageURL}
-//             alt="Post"
-//             className="object-contain max-h-full max-w-full"
-//           />
-//         </div>
-//       )}
+//   <div className="w-full aspect-square bg-black flex items-center justify-center">
+//     {isVideoUrl(localPost.imageURL) ? (
+//       <video
+//         src={localPost.imageURL}
+//         controls
+//         className="object-contain max-h-full max-w-full"
+//         style={{ background: "black" }}
+//       />
+//     ) : (
+//       <img
+//         src={localPost.imageURL}
+//         alt="Post"
+//         className="object-contain max-h-full max-w-full"
+//       />
+//     )}
+//   </div>
+// )}
 
 //       {/* Action Buttons */}
 //       <div className="px-4 py-3 flex space-x-4">
@@ -256,6 +326,7 @@
 // }
 
 
+
 "use client";
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -298,7 +369,7 @@ export default function PostCard({ post }) {
 
   // Helper to get the best available username
   const getUsername = (userObj) => {
-    return userObj?.username || userObj?.displayName || userObj?.name ||  "Someone";
+    return userObj?.username || userObj?.displayName || userObj?.name ||  "User";
   };
 
   const handleDelete = (id) => {
@@ -319,7 +390,8 @@ export default function PostCard({ post }) {
       } else {
         await dispatch(followUser({
           currentUserId: user.uid,
-          targetUserId: localPost.uid
+          targetUserId: localPost.uid,
+          senderName: getUsername(user)
         })).unwrap();
         
         if (user.uid !== localPost.uid) {
@@ -353,7 +425,8 @@ export default function PostCard({ post }) {
         await dispatch(likePost({ 
           postId: localPost.id, 
           userId: user.uid,
-          postOwnerId: localPost.uid
+          postOwnerId: localPost.uid,
+          senderName: getUsername(user)
         })).unwrap();
 
         if (user.uid !== localPost.uid) {
@@ -391,7 +464,8 @@ export default function PostCard({ post }) {
       await dispatch(addComment({
         postId: localPost.id,
         comment: newComment,
-        postOwnerId: localPost.uid
+        postOwnerId: localPost.uid,
+        senderName: getUsername(user)
       })).unwrap();
 
       if (user.uid !== localPost.uid) {
@@ -426,10 +500,9 @@ export default function PostCard({ post }) {
     ? formatDistanceToNow(new Date(localPost.createdAt), { addSuffix: true })
     : "";
 
-    const isVideoUrl = (url) => {
-  return url && /\.(mp4|webm|ogg)$/i.test(url);
-};
-
+  const isVideoUrl = (url) => {
+    return url && /\.(mp4|webm|ogg)$/i.test(url);
+  };
 
   return (
     <div className="bg-white border-x border-gray-300 rounded-md shadow-sm mb-6 w-full max-w-xl mx-auto">
@@ -476,23 +549,23 @@ export default function PostCard({ post }) {
 
       {/* Post Media */}
       {localPost.imageURL && (
-  <div className="w-full aspect-square bg-black flex items-center justify-center">
-    {isVideoUrl(localPost.imageURL) ? (
-      <video
-        src={localPost.imageURL}
-        controls
-        className="object-contain max-h-full max-w-full"
-        style={{ background: "black" }}
-      />
-    ) : (
-      <img
-        src={localPost.imageURL}
-        alt="Post"
-        className="object-contain max-h-full max-w-full"
-      />
-    )}
-  </div>
-)}
+        <div className="w-full aspect-square bg-black flex items-center justify-center">
+          {isVideoUrl(localPost.imageURL) ? (
+            <video
+              src={localPost.imageURL}
+              controls
+              className="object-contain max-h-full max-w-full"
+              style={{ background: "black" }}
+            />
+          ) : (
+            <img
+              src={localPost.imageURL}
+              alt="Post"
+              className="object-contain max-h-full max-w-full"
+            />
+          )}
+        </div>
+      )}
 
       {/* Action Buttons */}
       <div className="px-4 py-3 flex space-x-4">
