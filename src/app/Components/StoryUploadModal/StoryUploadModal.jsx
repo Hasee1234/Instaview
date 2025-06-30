@@ -81,3 +81,97 @@ const StoryUploadModal = ({ onClose }) => {
 };
 
 export default StoryUploadModal;
+
+
+// "use client";
+// import React, { useState } from "react";
+// import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+// import { db } from "@/app/Config/firebase";
+
+// const StoryUploadModal = ({ user, onClose, onUpload }) => {
+//   const [mediaUrl, setMediaUrl] = useState("");
+//   const [mediaType, setMediaType] = useState("");
+//   const [loading, setLoading] = useState(false);
+
+//   const uploadMedia = async (e) => {
+//     const file = e.target.files[0];
+//     if (!file) return;
+//     setLoading(true);
+//     const formData = new FormData();
+//     formData.append("file", file);
+//     formData.append("upload_preset", "social media app");
+
+//     // Detect file type
+//     const isVideo = file.type.startsWith("video/");
+//     setMediaType(isVideo ? "video" : "image");
+
+//     try {
+//       const cloudinaryUrl = isVideo
+//         ? "https://api.cloudinary.com/v1_1/dd22qjrpn/video/upload"
+//         : "https://api.cloudinary.com/v1_1/dd22qjrpn/image/upload";
+//       const res = await fetch(cloudinaryUrl, {
+//         method: "POST",
+//         body: formData,
+//       });
+//       const data = await res.json();
+//       if (data.secure_url) {
+//         setMediaUrl(data.secure_url);
+//       }
+//     } catch (error) {
+//       console.error("Upload failed:", error);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   const handleSubmit = async () => {
+//     if (!mediaUrl) return;
+//     try {
+//       await addDoc(collection(db, "Stories"), {
+//         uid: user.uid,
+//         username: user.name || "User",
+//         profilePic: user.profilePic || null,
+//         mediaUrl,
+//         mediaType,
+//         timestamp: serverTimestamp(),
+//       });
+//       if (onUpload) onUpload();
+//       onClose();
+//     } catch (err) {
+//       alert("Failed to post story.");
+//     }
+//   };
+
+//   return (
+//     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+//       <div className="relative bg-white p-6 rounded-lg shadow-lg w-96 border">
+//         <button
+//           onClick={onClose}
+//           className="absolute top-2 right-3 text-xl font-bold text-gray-500 hover:text-black"
+//         >
+//           ✖
+//         </button>
+//         <h2 className="text-xl font-semibold text-center mb-4">Upload Story</h2>
+//         <input
+//           type="file"
+//           accept="image/*,video/*"
+//           className="mb-3 w-full"
+//           onChange={uploadMedia}
+//         />
+//         <button
+//           onClick={handleSubmit}
+//           disabled={!mediaUrl || loading}
+//           className={`w-full mt-3 py-2 rounded-md text-white ${
+//             !mediaUrl || loading
+//               ? "bg-gray-400 cursor-not-allowed"
+//               : "bg-blue-500 hover:bg-blue-600"
+//           }`}
+//         >
+//           {loading ? "Uploading..." : "Post Story"}
+//         </button>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default StoryUploadModal;

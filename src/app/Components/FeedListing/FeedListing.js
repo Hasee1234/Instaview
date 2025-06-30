@@ -35,17 +35,13 @@ export default function FeedListing({ onLoaded }) {
     dispatch(getposts());
   }, [dispatch]);
 
-  // Call onLoaded as soon as feed is defined (even if empty)
-  // useEffect(() => {
-  //   if (feed !== undefined && onLoaded) {
-  //     onLoaded();
-  //   }
-  // }, [feed, onLoaded]);
 
-  useEffect(() => {
-  console.log("Feed changed:", feed);
+useEffect(() => {
   if (Array.isArray(feed) && onLoaded) {
-    onLoaded();
+    const timer = setTimeout(() => {
+      onLoaded();
+    }, 1000); // 1 second minimum loader
+    return () => clearTimeout(timer);
   }
 }, [feed, onLoaded]);
 
