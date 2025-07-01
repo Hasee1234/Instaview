@@ -13,7 +13,7 @@ export default function LoaderPage() {
         />
       </div>
       {/* Bottom content with top border */}
-      <div className="w-full flex flex-col items-center pb-8 border-t border-gray-200">
+          <div className="w-full flex flex-col items-center pb-8">
         <span className="text-black text-base mt-6 mb-1">from</span>
         <span
           className="text-3xl"

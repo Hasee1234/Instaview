@@ -317,6 +317,7 @@ import { Heart, MessageCircle, X } from "lucide-react";
 import Link from "next/link";
 import defaultPic from "@/app/Assets/defaultpic.jpg";
 import MobileNavbar from "@/app/Components/MobileNavbar/MobileNavbar";
+import LogoutDialog from "@/app/Components/LogoutDialog/LogoutDialog";
 
 const isVideoPost = (post) => {
   const url = post.mediaUrl || post.imageURL || "";
@@ -332,6 +333,7 @@ const Page = () => {
   const [selectedPost, setSelectedPost] = useState(null);
   const [showCreatePost, setShowCreatePost] = useState(false);
   const [hydrated, setHydrated] = useState(false);
+const [showLogoutDialog, setShowLogoutDialog] = useState(false);
 
   useEffect(() => {
     setHydrated(true);
@@ -400,9 +402,9 @@ const Page = () => {
                       Edit Profile
                     </button>
                   </Link>
-                  <button
-                    onClick={() => setShowCreatePost(true)}
-                    className="p-2 rounded-full hover:bg-gray-100"
+                 <button
+                  onClick={() => setShowLogoutDialog(true)}
+                  className="p-2 rounded-full hover:bg-gray-100"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -489,6 +491,13 @@ const Page = () => {
           </div>
         </div>
       </div>
+
+
+
+            <LogoutDialog
+  isOpen={showLogoutDialog}
+  onClose={() => setShowLogoutDialog(false)}
+/>
 
       {/* Create Post Modal */}
       <CreatePost
