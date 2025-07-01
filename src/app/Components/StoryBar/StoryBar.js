@@ -243,11 +243,18 @@ const StoryBar = ({ onLoaded }) => {
   }, [dispatch]);
 
   // Call onLoaded as soon as stories is defined (even if empty)
+  // useEffect(() => {
+  //   if (isClient && stories !== undefined && onLoaded) {
+  //     onLoaded();
+  //   }
+  // }, [isClient, stories, onLoaded]);
+
+
   useEffect(() => {
-    if (isClient && stories !== undefined && onLoaded) {
-      onLoaded();
-    }
-  }, [isClient, stories, onLoaded]);
+  if (stories !== undefined && onLoaded) {
+    onLoaded();
+  }
+}, [stories, onLoaded]);
 
   // Filter stories: only those from followed users (and self) and not older than 24h
   const now = Date.now();
@@ -342,4 +349,3 @@ const StoryBar = ({ onLoaded }) => {
 };
 
 export default StoryBar;
-// export default StoryBar;

@@ -1,72 +1,72 @@
 
-// "use client";
-// import React, { useState } from "react";
-// import Leftbar from "./Components/Leftbar/Leftbar";
-// import StoryBar from "./Components/StoryBar/StoryBar";
-// import FeedListing from "./Components/FeedListing/FeedListing";
-// import CreatePost from "./Components/CreatePost/CreatePost";
-// import Rightbar from "./Components/Rightbar/Rightbar";
-// import MobileNavbar from "./Components/MobileNavbar/MobileNavbar";
-// import SearchDialog from "./Components/SearchDialog/SearchDialog";
-// import LoaderPage from "./Components/LoaderPage/LoaderPage";
+"use client";
+import React, { useState } from "react";
+import Leftbar from "./Components/Leftbar/Leftbar";
+import StoryBar from "./Components/StoryBar/StoryBar";
+import FeedListing from "./Components/FeedListing/FeedListing";
+import CreatePost from "./Components/CreatePost/CreatePost";
+import Rightbar from "./Components/Rightbar/Rightbar";
+import MobileNavbar from "./Components/MobileNavbar/MobileNavbar";
+import SearchDialog from "./Components/SearchDialog/SearchDialog";
+import LoaderPage from "./Components/LoaderPage/LoaderPage";
 
-// export default function Page() {
-//   const [showCreatePost, setShowCreatePost] = useState(false);
-//   const [showSearchDialog, setShowSearchDialog] = useState(false);
+export default function Page() {
+  const [showCreatePost, setShowCreatePost] = useState(false);
+  const [showSearchDialog, setShowSearchDialog] = useState(false);
 
-//   // Loader state
-//   const [storiesLoaded, setStoriesLoaded] = useState(false);
-//   const [feedLoaded, setFeedLoaded] = useState(false);
+  // Loader state
+  const [storiesLoaded, setStoriesLoaded] = useState(false);
+  const [feedLoaded, setFeedLoaded] = useState(false);
 
-//   const allLoaded = storiesLoaded && feedLoaded;
+  const allLoaded = storiesLoaded && feedLoaded;
 
-//   return (
-//     <>
-//       {!allLoaded && <LoaderPage />}
-//       <div className={`grid grid-cols-1 md:grid-cols-[1fr_2.5fr] lg:grid-cols-[1fr_2.5fr_1.5fr] gap-1 h-screen ${!allLoaded ? "invisible" : ""}`}>
-//         {/* Left Sidebar - hidden on screens < 768px */}
-//         <div className="hidden md:block p-4 text-center">
-//           <Leftbar setShowCreatePost={setShowCreatePost} />
-//         </div>
+  return (
+    <>
+      {!allLoaded && <LoaderPage />}
+      <div className={`grid grid-cols-1 md:grid-cols-[1fr_2.5fr] lg:grid-cols-[1fr_2.5fr_1.5fr] gap-1 h-screen ${!allLoaded ? "invisible" : ""}`}>
+        {/* Left Sidebar - hidden on screens < 768px */}
+        <div className="hidden md:block p-4 text-center">
+          <Leftbar setShowCreatePost={setShowCreatePost} />
+        </div>
 
-//         {/* Middle Section (StoryBar + Feed) */}
-//         <div className="flex flex-col">
-//           <div className="p-4 text-center">
-//             <StoryBar onLoaded={() => setStoriesLoaded(true)} />
-//           </div>
-//           <div className="p-4 text-center flex-grow overflow-y-auto">
-//             <FeedListing onLoaded={() => setFeedLoaded(true)} />
-//           </div>
-//         </div>
+        {/* Middle Section (StoryBar + Feed) */}
+        <div className="flex flex-col">
+          <div className="p-4 text-center">
+            <StoryBar onLoaded={() => setStoriesLoaded(true)} />
+          </div>
+          <div className="p-4 text-center flex-grow overflow-y-auto">
+            <FeedListing onLoaded={() => setFeedLoaded(true)} />
+          </div>
+        </div>
 
-//         {/* Right Sidebar - hidden on screens ≤ 1160px */}
-//         <div className="hidden lg:block p-4 text-center">
-//           <Rightbar />
-//         </div>
-//       </div>
+        {/* Right Sidebar - hidden on screens ≤ 1160px */}
+        <div className="hidden lg:block p-4 text-center">
+          <Rightbar />
+        </div>
+      </div>
 
-//       {/* Modal Overlay */}
-//       <CreatePost
-//         isOpen={showCreatePost}
-//         onClose={() => setShowCreatePost(false)}
-//       />
+      {/* Modal Overlay */}
+      <CreatePost
+        isOpen={showCreatePost}
+        onClose={() => setShowCreatePost(false)}
+      />
 
-//       {/* Mobile Navbar */}
-//       <MobileNavbar
-//         onCreatePost={() => setShowCreatePost(true)}
-//         onShowSearch={() => setShowSearchDialog(true)}
-//       />
+      {/* Mobile Navbar */}
+      <MobileNavbar
+        onCreatePost={() => setShowCreatePost(true)}
+        onShowSearch={() => setShowSearchDialog(true)}
+      />
 
-//       {/* Search Dialog for mobile */}
-//       {showSearchDialog && (
-//         <SearchDialog
-//           isMobile={true}
-//           onClose={() => setShowSearchDialog(false)}
-//         />
-//       )}
-//     </>
-//   );
-// }
+      {/* Search Dialog for mobile */}
+      {showSearchDialog && (
+        <SearchDialog
+          isMobile={true}
+          onClose={() => setShowSearchDialog(false)}
+        />
+      )}
+    </>
+  );
+}
 
 
 
@@ -167,85 +167,169 @@
 
 
 
-"use client";
-import React, { useState, useEffect } from "react";
-import Leftbar from "./Components/Leftbar/Leftbar";
-import StoryBar from "./Components/StoryBar/StoryBar";
-import FeedListing from "./Components/FeedListing/FeedListing";
-import CreatePost from "./Components/CreatePost/CreatePost";
-import Rightbar from "./Components/Rightbar/Rightbar";
-import MobileNavbar from "./Components/MobileNavbar/MobileNavbar";
-import SearchDialog from "./Components/SearchDialog/SearchDialog";
-import LoaderPage from "./Components/LoaderPage/LoaderPage";
+// "use client";
+// import React, { useState, useEffect } from "react";
+// import Leftbar from "./Components/Leftbar/Leftbar";
+// import StoryBar from "./Components/StoryBar/StoryBar";
+// import FeedListing from "./Components/FeedListing/FeedListing";
+// import CreatePost from "./Components/CreatePost/CreatePost";
+// import Rightbar from "./Components/Rightbar/Rightbar";
+// import MobileNavbar from "./Components/MobileNavbar/MobileNavbar";
+// import SearchDialog from "./Components/SearchDialog/SearchDialog";
+// import LoaderPage from "./Components/LoaderPage/LoaderPage";
 
-export default function Page() {
-  const [showCreatePost, setShowCreatePost] = useState(false);
-  const [showSearchDialog, setShowSearchDialog] = useState(false);
+// export default function Page() {
+//   const [showCreatePost, setShowCreatePost] = useState(false);
+//   const [showSearchDialog, setShowSearchDialog] = useState(false);
 
-  // Loader state
-  const [storiesLoaded, setStoriesLoaded] = useState(false);
-  const [feedLoaded, setFeedLoaded] = useState(false);
-  const [showLoader, setShowLoader] = useState(false);
+//   // Loader state
+//   const [storiesLoaded, setStoriesLoaded] = useState(false);
+//   const [feedLoaded, setFeedLoaded] = useState(false);
+//   const [showLoader, setShowLoader] = useState(false);
 
-  // Only show loader on first visit in this tab
-  useEffect(() => {
-    if (typeof window !== "undefined" && !sessionStorage.getItem("homeLoadedOnce")) {
-      setShowLoader(true);
-    }
-  }, []);
+//   // Only show loader on first visit in this tab
+//   useEffect(() => {
+//     if (typeof window !== "undefined" && !sessionStorage.getItem("homeLoadedOnce")) {
+//       setShowLoader(true);
+//     }
+//   }, []);
 
-  // Hide loader after data is loaded
-  useEffect(() => {
-    if (showLoader && storiesLoaded && feedLoaded) {
-      sessionStorage.setItem("homeLoadedOnce", "true");
-      setShowLoader(false);
-    }
-  }, [showLoader, storiesLoaded, feedLoaded]);
+//   // Hide loader after data is loaded
+//   useEffect(() => {
+//     if (showLoader && storiesLoaded && feedLoaded) {
+//       sessionStorage.setItem("homeLoadedOnce", "true");
+//       setShowLoader(false);
+//     }
+//   }, [showLoader, storiesLoaded, feedLoaded]);
 
-  // If not first visit, always show content immediately
-  const shouldShowLoader = showLoader;
+//   // If not first visit, always show content immediately
+//   const shouldShowLoader = showLoader;
 
-  return (
-    <>
-      {shouldShowLoader && <LoaderPage />}
-      <div className="grid grid-cols-1 md:grid-cols-[1fr_2.5fr] lg:grid-cols-[1fr_2.5fr_1.5fr] gap-1 h-screen">
-        {/* Left Sidebar - hidden on screens < 768px */}
-        <div className="hidden md:block p-4 text-center">
-          <Leftbar setShowCreatePost={setShowCreatePost} />
-        </div>
-        {/* Middle Section (StoryBar + Feed) */}
-        <div className="flex flex-col">
-          <div className="p-4 text-center">
-            <StoryBar onLoaded={() => setStoriesLoaded(true)} />
-          </div>
-          <div className="p-4 text-center flex-grow overflow-y-auto">
-            <FeedListing onLoaded={() => setFeedLoaded(true)} showLoader={shouldShowLoader} />
-          </div>
-        </div>
-        {/* Right Sidebar - hidden on screens ≤ 1160px */}
-        <div className="hidden lg:block p-4 text-center">
-          <Rightbar />
-        </div>
-      </div>
-      {/* Modal Overlay */}
-      <CreatePost
-        isOpen={showCreatePost}
-        onClose={() => setShowCreatePost(false)}
-      />
-      {/* Mobile Navbar */}
-      <MobileNavbar
-        onCreatePost={() => setShowCreatePost(true)}
-        onShowSearch={() => setShowSearchDialog(true)}
-      />
-      {/* Search Dialog for mobile */}
-      {showSearchDialog && (
-        <SearchDialog
-          isMobile={true}
-          onClose={() => setShowSearchDialog(false)}
-        />
-      )}
-    </>
-  );
-}
+//   return (
+//     <>
+//       {shouldShowLoader && <LoaderPage />}
+//       <div className="grid grid-cols-1 md:grid-cols-[1fr_2.5fr] lg:grid-cols-[1fr_2.5fr_1.5fr] gap-1 h-screen">
+//         {/* Left Sidebar - hidden on screens < 768px */}
+//         <div className="hidden md:block p-4 text-center">
+//           <Leftbar setShowCreatePost={setShowCreatePost} />
+//         </div>
+//         {/* Middle Section (StoryBar + Feed) */}
+//         <div className="flex flex-col">
+//           <div className="p-4 text-center">
+//             <StoryBar onLoaded={() => setStoriesLoaded(true)} />
+//           </div>
+//           <div className="p-4 text-center flex-grow overflow-y-auto">
+//             <FeedListing onLoaded={() => setFeedLoaded(true)} showLoader={shouldShowLoader} />
+//           </div>
+//         </div>
+//         {/* Right Sidebar - hidden on screens ≤ 1160px */}
+//         <div className="hidden lg:block p-4 text-center">
+//           <Rightbar />
+//         </div>
+//       </div>
+//       {/* Modal Overlay */}
+//       <CreatePost
+//         isOpen={showCreatePost}
+//         onClose={() => setShowCreatePost(false)}
+//       />
+//       {/* Mobile Navbar */}
+//       <MobileNavbar
+//         onCreatePost={() => setShowCreatePost(true)}
+//         onShowSearch={() => setShowSearchDialog(true)}
+//       />
+//       {/* Search Dialog for mobile */}
+//       {showSearchDialog && (
+//         <SearchDialog
+//           isMobile={true}
+//           onClose={() => setShowSearchDialog(false)}
+//         />
+//       )}
+//     </>
+//   );
+// }
 
 
+
+
+
+// "use client";
+// import React, { useState, useEffect } from "react";
+// import { useSelector } from "react-redux";
+// import { useRouter } from "next/navigation";
+// import Leftbar from "./Components/Leftbar/Leftbar";
+// import StoryBar from "./Components/StoryBar/StoryBar";
+// import FeedListing from "./Components/FeedListing/FeedListing";
+// import CreatePost from "./Components/CreatePost/CreatePost";
+// import Rightbar from "./Components/Rightbar/Rightbar";
+// import MobileNavbar from "./Components/MobileNavbar/MobileNavbar";
+// import SearchDialog from "./Components/SearchDialog/SearchDialog";
+// import LoaderPage from "./Components/LoaderPage/LoaderPage";
+
+// export default function Page() {
+//   // ...existing state...
+//   const [showCreatePost, setShowCreatePost] = useState(false);
+//   const [showSearchDialog, setShowSearchDialog] = useState(false);
+//   const [storiesLoaded, setStoriesLoaded] = useState(false);
+//   const [feedLoaded, setFeedLoaded] = useState(false);
+//   const [hydrated, setHydrated] = useState(false);
+
+//   const user = useSelector((state) => state.auth.user);
+//   const router = useRouter();
+
+//   useEffect(() => {
+//     setHydrated(true);
+//   }, []);
+
+//   useEffect(() => {
+//     if (hydrated && user === null) {
+//       router.replace("/Pages/Login");
+//     }
+//   }, [hydrated, user, router]);
+
+//   // If not hydrated or not checked auth, render nothing
+//   if (!hydrated || user === null) return null;
+
+//   // Show loader until both stories and feed are loaded
+//   if (!storiesLoaded || !feedLoaded) return <LoaderPage />;
+
+//   // Main content
+//   return (
+//     <>
+//       <div className="grid grid-cols-1 md:grid-cols-[1fr_2.5fr] lg:grid-cols-[1fr_2.5fr_1.5fr] gap-1 h-screen">
+//         {/* Left Sidebar */}
+//         <div className="hidden md:block p-4 text-center">
+//           <Leftbar setShowCreatePost={setShowCreatePost} />
+//         </div>
+//         {/* Middle Section */}
+//         <div className="flex flex-col">
+//           <div className="p-4 text-center">
+// <StoryBar onLoaded={() => { console.log("Stories loaded"); setStoriesLoaded(true); }} />
+//           </div>
+//           <div className="p-4 text-center flex-grow overflow-y-auto">
+//             <FeedListing onLoaded={() => { console.log("Feed loaded"); setFeedLoaded(true); }} showLoader={!storiesLoaded || !feedLoaded} />          </div>
+//         </div>
+//         {/* Right Sidebar */}
+//         <div className="hidden lg:block p-4 text-center">
+//           <Rightbar />
+//         </div>
+//       </div>
+//       {/* Modal Overlay */}
+//       <CreatePost
+//         isOpen={showCreatePost}
+//         onClose={() => setShowCreatePost(false)}
+//       />
+//       {/* Mobile Navbar */}
+//       <MobileNavbar
+//         onCreatePost={() => setShowCreatePost(true)}
+//         onShowSearch={() => setShowSearchDialog(true)}
+//       />
+//       {/* Search Dialog for mobile */}
+//       {showSearchDialog && (
+//         <SearchDialog
+//           isMobile={true}
+//           onClose={() => setShowSearchDialog(false)}
+//         />
+//       )}
+//     </>
+//   );
+// }
