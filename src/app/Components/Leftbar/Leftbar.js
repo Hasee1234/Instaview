@@ -259,7 +259,7 @@ const Leftbar = ({ setShowCreatePost }) => {
               <button className={getButtonClass("/")}>
                 <span className="mr-3">
                   <svg className={getIconClass("/")} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                    <path d="M3 9.5L12 4l9 5.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V9.5Z" />
+                    <path d="M3 9.5L12 4l 9 5.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V9.5Z" />
                   </svg>
                 </span>
                 <span className="max-[1233px]:hidden">Home</span>
