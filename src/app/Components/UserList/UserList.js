@@ -1,31 +1,4 @@
 
-
-// import React from "react";
-
-// export default function UserList({ users, selectedUserId, onSelect, isMobile }) {
-//   return (
-//     <div className={`bg-gray-50 border-r h-full overflow-y-auto flex flex-col ${isMobile ? "w-full" : "w-56"}`}>
-//       <div className="px-4 py-4 border-b text-lg font-bold bg-white sticky top-0 z-10">Chats</div>
-//       {users.length === 0 && (
-//         <div className="text-gray-400 text-center mt-8">No followed users</div>
-//       )}
-//       {users.map((u) => (
-//         <div
-//           key={u.uid}
-//           onClick={() => onSelect(u)}
-//           className={`cursor-pointer px-4 py-3 flex items-center gap-2 hover:bg-blue-100 transition ${
-//             selectedUserId === u.uid ? "bg-blue-50" : ""
-//           }`}
-//         >
-//           <img src={u.profilePic || "/defaultpic.jpg"} className="w-8 h-8 rounded-full object-cover" alt="" />
-//           <span className="font-medium truncate">{u.name || u.username || u.displayName || "User"}</span>
-//         </div>
-//       ))}
-//     </div>
-//   );
-// }
-
-
 import React from "react";
 
 export default function UserList({ users, selectedUserId, onSelect, isMobile }) {

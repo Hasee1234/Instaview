@@ -12,28 +12,7 @@ export default function CreatePost({ isOpen, onClose }) {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth?.user);
 
-  // const uploadImage = async (e) => {
-  //   try {
-  //     setLoading(true);
-  //     const file = e.target.files[0];
-  //     const formData = new FormData();
-  //     formData.append("file", file);
-  //     formData.append("upload_preset", "social media app");
-
-  //     const res = await fetch("https://api.cloudinary.com/v1_1/dd22qjrpn/image/upload", {
-  //       method: "POST",
-  //       body: formData,
-  //     });
-
-  //     const data = await res.json();
-  //     if (data.secure_url) setImageURL(data.secure_url);
-  //   } catch (err) {
-  //     console.error("Upload failed:", err);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-    const uploadImage = async (e) => {
+  const uploadImage = async (e) => {
   const file = e.target.files[0];
   if (!file) return;
   setLoading(true);
