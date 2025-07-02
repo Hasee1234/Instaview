@@ -151,7 +151,10 @@ export default function Page() {
             onShowNotifications={() => setShowNotificationDialog(true)}
           />
         )}
-<div className={`${!isMobile ? "ml-16" : ""} flex flex-1 relative`}>          {showUserList && (
+{/* <div className={`${!isMobile ? "ml-16" : ""} flex flex-1 relative`}>      */}
+<div className={`flex flex-1 relative ${!isMobile ? "ml-16" : ""}`}>
+
+       {showUserList && (
             <UserList
               users={followedUsers}
               selectedUserId={selectedUser?.uid}
@@ -159,7 +162,7 @@ export default function Page() {
               isMobile={isMobile}
             />
           )}
-          {showChat && selectedUser && (
+          {/* {showChat && selectedUser && (
 <div className={`p-4 border-t bg-white ${isMobile ? "pb-20" : ""}`}>
               <ChatWindow
                 user={user}
@@ -169,7 +172,18 @@ export default function Page() {
                 onBack={() => setSelectedUser(null)}
               />
             </div>
-          )}
+          )} */}
+          {showChat && selectedUser && (
+  <div className={`flex-1 flex flex-col h-full ${isMobile ? "pb-20" : ""}`}>
+    <ChatWindow
+      user={user}
+      messages={messages}
+      selectedUser={selectedUser}
+      isMobile={isMobile}
+      onBack={() => setSelectedUser(null)}
+    />
+  </div>
+)}
           {!selectedUser && !isMobile && (
             <div className="flex-1 flex items-center justify-center text-gray-400">
               Select a user to start chatting
