@@ -162,17 +162,6 @@ export default function Page() {
               isMobile={isMobile}
             />
           )}
-          {/* {showChat && selectedUser && (
-<div className={`p-4 border-t bg-white ${isMobile ? "pb-20" : ""}`}>
-              <ChatWindow
-                user={user}
-                messages={messages}
-                selectedUser={selectedUser}
-                isMobile={isMobile}
-                onBack={() => setSelectedUser(null)}
-              />
-            </div>
-          )} */}
           {showChat && selectedUser && (
   <div className={`flex-1 flex flex-col h-full ${isMobile ? "pb-20" : ""}`}>
     <ChatWindow

@@ -1,4 +1,3 @@
-// components/StoryUploadModal.jsx
 'use client';
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -9,33 +8,35 @@ const StoryUploadModal = ({ onClose }) => {
   const [loading, setLoading] = useState(false);
   const user = useSelector((state) => state.auth.user);
   const dispatch = useDispatch();
+const uploadMedia = async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  setLoading(true);
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', 'social media app');
 
-  const uploadMedia = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    setLoading(true);
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('upload_preset', 'social media app');
+  // Detect file type
+  const isVideo = file.type.startsWith('video/');
+  const uploadUrl = isVideo
+    ? 'https://api.cloudinary.com/v1_1/dd22qjrpn/video/upload'
+    : 'https://api.cloudinary.com/v1_1/dd22qjrpn/image/upload';
 
-    try {
-      const res = await fetch(
-        'https://api.cloudinary.com/v1_1/dd22qjrpn/image/upload',
-        {
-          method: 'POST',
-          body: formData,
-        }
-      );
-      const data = await res.json();
-      if (data.secure_url) {
-        setMediaUrl(data.secure_url);
-      }
-    } catch (error) {
-      console.error('Upload failed:', error);
-    } finally {
-      setLoading(false);
+  try {
+    const res = await fetch(uploadUrl, {
+      method: 'POST',
+      body: formData,
+    });
+    const data = await res.json();
+    if (data.secure_url) {
+      setMediaUrl(data.secure_url);
     }
-  };
+  } catch (error) {
+    console.error('Upload failed:', error);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleSubmit = () => {
     if (!mediaUrl) return;
@@ -63,7 +64,21 @@ const StoryUploadModal = ({ onClose }) => {
           ✖
         </button>
         <h2 className="text-xl font-semibold text-center mb-4">Upload Story</h2>
-        <input type="file" className="mb-3 w-full" onChange={uploadMedia} />
+        <input
+          type="file"
+          accept="image/*,video/*"
+          className="mb-3 w-full"
+          onChange={uploadMedia}
+        />
+        {mediaUrl && (
+          <div className="mb-3">
+            {mediaUrl.match(/\.(mp4|webm|ogg)$/i) ? (
+              <video src={mediaUrl} controls className="w-full rounded" />
+            ) : (
+              <img src={mediaUrl} alt="preview" className="w-full rounded" />
+            )}
+          </div>
+        )}
         <button
           onClick={handleSubmit}
           disabled={!mediaUrl || loading}
@@ -81,4 +96,3 @@ const StoryUploadModal = ({ onClose }) => {
 };
 
 export default StoryUploadModal;
-
